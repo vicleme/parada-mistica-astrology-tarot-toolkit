@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tiragem de Cartas - Parada Mística</title>
+    <link rel="icon" href="assets/logo.png">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="assets/css/deck-manager.css">
+    <meta name="description" content="Tiragens de tarot online com o baralho Rider–Waite–Smith e suporte a baralhos próprios. Escolha um método de leitura para iluminar suas questões.">
+
+    <!-- Open Graph / Facebook, WhatsApp, etc. -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://paradamistica.netlify.app/tiragem-cartas.html">
+    <meta property="og:title" content="Tiragem de Cartas - Parada Mística">
+    <meta property="og:description" content="Tiragens de tarot online com o baralho Rider–Waite–Smith e suporte a baralhos próprios. Escolha um método de leitura para iluminar suas questões.">
+    <meta property="og:image" content="https://paradamistica.netlify.app/assets/og-image.jpg">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:locale" content="pt_BR">
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:url" content="https://paradamistica.netlify.app/tiragem-cartas.html">
+    <meta name="twitter:title" content="Tiragem de Cartas - Parada Mística">
+    <meta name="twitter:description" content="Tiragens de tarot online com o baralho Rider–Waite–Smith e suporte a baralhos próprios. Escolha um método de leitura para iluminar suas questões.">
+    <meta name="twitter:image" content="https://paradamistica.netlify.app/assets/og-image.jpg">
+    <script>
+        // Aplica tema antes do render para evitar flash
+        (function(){
+            const t = localStorage.getItem("cartarium_tema") || "sistema";
+            if (t === "escuro" || (t === "sistema" && window.matchMedia("(prefers-color-scheme: dark)").matches)) {
+                document.documentElement.setAttribute("data-tema", "escuro");
+            }
+        })();
+    </script>
+    <style>
+        .deck-select-row { display: flex; align-items: center; gap: 6px; }
+        .deck-select-row select { flex: 1; }
+        #btn-favorito {
+            background: none;
+            border: none;
+            font-size: 1.2rem;
+            cursor: pointer;
+            padding: 0 2px;
+            line-height: 1;
+            color: #c8a000;
+            flex-shrink: 0;
+        }
+        #btn-favorito:hover { transform: scale(1.2); }
+    </style>
+
+    <!-- Modal de imagem ampliada -->
+    <div id="imageModal" class="modal">
+        <span class="close">&times;</span>
+        <span class="prev">&#10094;</span>
+        <img class="modal-content" id="imgExpanded" alt="Carta ampliada">
+        <span class="next">&#10095;</span>
+    </div>
+
+    <!-- Modal de baralho esgotado -->
+    <div id="modalBaralhoEsgotado" class="modal-overlay" style="display:none">
+        <div class="modal-box">
+            <h3>⚠️ Baralho insuficiente</h3>
+            <p id="textoEsgotado"></p>
+            <div class="modal-acoes">
+                <button onclick="opcaoEsgotado('continuar')">🔀 Embaralhar usadas e continuar sessão</button>
+                <button onclick="opcaoEsgotado('nova-sessao')">🆕 Iniciar nova sessão</button>
+                <button onclick="opcaoEsgotado('alterar')" id="btnAlterar">✏️ Alterar quantidade de cartas</button>
+                <button onclick="opcaoEsgotado('cancelar')" class="btn-secundario">✖ Cancelar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de cópia de perguntas -->
+    <div id="modalCopiar" class="modal-overlay" style="display:none">
+        <div class="modal-box">
+            <h3>📋 Copiar perguntas</h3>
+            <p>Selecione quais perguntas deseja copiar:</p>
+            <div id="listaCopiar"></div>
+            <div class="copia-ordem-row">
+                <label>Ordem:</label>
+                <div class="toggle-modo toggle-ordem">
+                    <button type="button" id="btn-ordem-recente" class="ativo" onclick="definirOrdemCopia('recente')">Mais recente → mais antiga</button>
+                    <button type="button" id="btn-ordem-antiga" onclick="definirOrdemCopia('antiga')">Mais antiga → mais recente</button>
+                </div>
+            </div>
+            <div class="modal-acoes">
+                <button onclick="confirmarCopia()">Copiar selecionadas</button>
+                <button onclick="fecharModalCopiar()" class="btn-secundario">Cancelar</button>
+            </div>
+        </div>
+    </div>
+
+</head>
+
+<body>
+
+<header class="pm-header">
+    <div class="pm-header-inner">
+        <a href="index.html" class="pm-brand">
+            <img src="assets/hamsa-light.png" alt="Parada Mística">
+            <span>Parada Mística</span>
+        </a>
+        <nav class="pm-nav" id="pm-nav-principal">
+            <a href="index.html">Início</a>
+            <a href="#" title="Página ainda não publicada">Sobre</a>
+            <div class="pm-nav-dropdown">
+                <a href="#" class="pm-nav-dropdown-trigger ativo">Serviços ▾</a>
+                <div class="pm-nav-dropdown-menu">
+                    <a href="tiragem-cartas.html" class="ativo">Tiragem de Cartas</a>
+                    <a href="mapas.html">Mapas Astrais</a>
+                    <a href="sinastria.html">Sinastria</a>
+                    <a href="efemerides.html">Efemérides</a>
+                </div>
+            </div>
+            <a href="#" title="Página ainda não publicada">Blog</a>
+            <a href="#" title="Página ainda não publicada">Contato</a>
+        </nav>
+        <div class="pm-header-actions">
+            <button id="btn-tema" class="pm-btn-tema" onclick="ciclaTema()" title="Alternar tema">🌙</button>
+            <a href="#" class="pm-btn-agendar" title="Página ainda não publicada">Agendar Consulta</a>
+            <a href="#" class="pm-avatar" title="Página ainda não publicada"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="3.6"/><path d="M4.5 20c1.4-3.8 4.4-6 7.5-6s6.1 2.2 7.5 6"/></svg></a>
+            <button id="btn-menu-mobile" class="pm-hamburger" aria-label="Abrir menu" aria-expanded="false" aria-controls="pm-nav-principal">
+                <span class="pm-hamburger-bars"><span></span><span></span><span></span></span>
+            </button>
+        </div>
+    </div>
+</header>
+
+<section class="pm-hero">
+    <div class="pm-hero-inner">
+        <span class="pm-breadcrumb">Serviços &gt; <b>Tiragem de Cartas</b></span>
+        <h1>Tiragem de Cartas</h1>
+        <p class="pm-hero-sub">Leituras intuitivas para respostas, orientações e compreensão do momento que você vive.</p>
+
+
+<!-- ══════════════════════════════════════════════════════════
+     PAINEL DE CONFIGURAÇÃO
+═══════════════════════════════════════════════════════════════ -->
+<div class="container">
+
+    <!-- Modo Consulta Única / Sessão -->
+    <div class="modo-sessao-bar">
+        <label>Modo:</label>
+        <div class="toggle-modo">
+            <button id="btn-modo-unica" class="ativo" onclick="definirModo('unica')">Consulta Única</button>
+            <button id="btn-modo-sessao" onclick="definirModo('sessao')">Sessão</button>
+        </div>
+        <span id="sessao-contador"></span>
+        <p id="modo-ajuda" class="ajuda-texto" style="flex-basis:100%;margin:0">Consulta Única: a cada "Tirar", o baralho é embaralhado do zero. A mesma carta pode se repetir de uma tiragem para a outra.</p>
+    </div>
+
+    <div id="aviso-troca-deck">
+        ⚠️ Você trocou o baralho ou a quantidade de baralhos durante uma sessão ativa. A sessão continuará com a configuração anterior até você encerrá-la ou iniciar uma nova.
+    </div>
+
+    <!-- Sistema e Baralho -->
+    <div class="row-selects">
+        <div>
+            <label for="sistema">Sistema:</label>
+            <select id="sistema"></select>
+        </div>
+        <div>
+            <label for="deck">Baralho:</label>
+            <div class="deck-select-row">
+                <select id="deck"></select>
+                <button id="btn-favorito" title="Definir como favorito" onclick="toggleFavorito()">☆</button>
+                <button id="btn-gerenciar-baralhos" type="button" title="Gerenciar baralhos: importar, exportar, criar, excluir" aria-label="Gerenciar baralhos" onclick="CUSTOM_DECKS.abrir()">⚙️</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Créditos do baralho (preenchido por popularCreditos em loader.js) -->
+    <div id="deck-creditos" style="display:none"></div>
+
+    <!-- Baralho simples, duplo ou triplo -->
+    <div class="copias-row">
+        <label for="copias">Quantidade de baralhos:</label>
+        <select id="copias">
+            <option value="1">1 (simples)</option>
+            <option value="2">2 (duplo)</option>
+            <option value="3">3 (triplo)</option>
+        </select>
+    </div>
+    <p class="ajuda-texto copias-ajuda">Com 2 ou 3 baralhos, o baralho escolhido vira um monte com cópias de si mesmo, e a mesma carta pode sair mais de uma vez na tiragem.</p>
+
+    <!-- Modo de Tiragem -->
+    <label for="spread">Modo de tiragem:</label>
+    <select id="spread"></select>
+
+    <!-- Descrição das posições do spread (quando aplicável) -->
+    <div id="wrapper-posicoes">
+        <div id="spread-info"></div>
+    </div>
+
+    <!-- Inversão -->
+    <div id="wrapper-invertida" style="display:none">
+        <label class="checkbox-label">
+            <input type="checkbox" id="invertida"> Incluir inversão (direta/invertida)
+        </label>
+    </div>
+
+    <hr style="border:none;border-top:1px solid var(--border-soft);margin:14px 0 10px">
+
+    <!-- Seletor de área para sugestões -->
+    <div class="area-selector">
+        <label>Área:</label>
+        <div class="area-tabs" id="area-tabs">
+            <button class="area-tab ativa" data-area="geral"      onclick="selecionarArea('geral')">Geral</button>
+            <button class="area-tab"       data-area="amor"       onclick="selecionarArea('amor')">❤️ Amoroso</button>
+            <button class="area-tab"       data-area="trabalho"   onclick="selecionarArea('trabalho')">💼 Profissional</button>
+            <button class="area-tab"       data-area="espiritual" onclick="selecionarArea('espiritual')">✨ Espiritual</button>
+        </div>
+    </div>
+
+    <!-- Perguntas -->
+    <label>Perguntas:</label>
+    <div id="perguntas-lista"></div>
+    <button id="btn-add-pergunta" onclick="adicionarPergunta()">+ Adicionar pergunta</button>
+
+    <!-- Botões de ação -->
+    <div class="botoes-principais">
+        <button onclick="sortearTudo()">✨ Tirar</button>
+        <button class="btn-secundario" onclick="exibirBaralho()">📖 Exibir baralho</button>
+        <button class="btn-secundario" id="btn-encerrar-sessao" style="display:none" onclick="encerrarSessao()">🔚 Encerrar sessão</button>
+    </div>
+</div>
+    </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════════
+     RESULTADOS
+═══════════════════════════════════════════════════════════════ -->
+<div id="resultados-sessao"></div>
+
+<!-- ══════════════════════════════════════════════════════════
+     BOTÕES DE AÇÃO DO REGISTRO
+═══════════════════════════════════════════════════════════════ -->
+<div class="botoes-acao">
+    <button onclick="copiarUltima()">⚡ Copiar última</button>
+    <button onclick="abrirModalCopiar()">📋 Copiar perguntas</button>
+    <button class="btn-secundario" onclick="limparTiragens()">🗑 Limpar registro</button>
+    <button class="btn-secundario" onclick="capturarTiragem()">📷 Capturar</button>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════
+     REGISTRO
+═══════════════════════════════════════════════════════════════ -->
+<div id="registro">
+    <h3>Registro de Perguntas e Tiragens</h3>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════
+     PREENCHER REGISTRO MANUAL
+═══════════════════════════════════════════════════════════════ -->
+<div class="botoes-acao" style="display:flex; margin-bottom:4px;">
+    <button class="btn-secundario" id="btn-preencher-toggle" onclick="abrirPainelPreencherRegistro()" style="max-width:240px; flex:none;">✏️ Preencher registro</button>
+</div>
+
+<div id="painel-preencher-registro" style="display:none; max-width:680px; width:92%; margin:0 auto 24px;">
+    <div class="painel-preencher-box">
+        <h4>✏️ Preencher registro com tiragem copiada</h4>
+        <p class="painel-hint">Cole aqui o texto de uma tiragem copiada anteriormente. O sistema vai identificar as cartas e gerar a visualização automática.</p>
+        <textarea id="input-registro-manual" rows="8" placeholder="Pergunta: Qual a mensagem do mês?
+Baralho: Rider-Waite
+Spread: Cruz Celta
+Tiragem: A Lua, O Sol (Invertida), O Mundo
+
+(Ou cole livremente — o sistema tentará extrair as cartas da linha 'Tiragem:')"></textarea>
+        <div style="display:flex; gap:8px; margin-top:10px; flex-wrap:wrap;">
+            <button onclick="processarTextoRegistro()">🖼 Processar e visualizar</button>
+            <button class="btn-secundario" onclick="document.getElementById('input-registro-manual').value=''">🗑 Limpar</button>
+        </div>
+    </div>
+</div>
+
+
+<br>
+<button id="toggleChatbot">Abrir Chatbot</button>
+
+<div id="chatbotContainer" style="display:none; width:70%; max-width:1200px; margin:10px auto; text-align:center;">
+    <iframe src="https://app.thinkstack.ai/bot/index.html?chatbot_id=68dee4d9ffecb3f816e49649&type=inline"
+        frameborder="0" width="100%" style="min-height:600px; border:none;"></iframe>
+</div>
+
+<br>
+
+<footer class="pm-footer">
+    <img src="assets/hamsa-outline.png" class="pm-footer-watermark" alt="">
+    <div class="pm-footer-inner">
+        <div class="pm-footer-col pm-footer-about">
+            <div class="pm-footer-brand">
+            <img src="assets/hamsa-light.png" alt="Parada Mística">
+                <span>Parada Mística</span>
+            </div>
+            <p>Astrologia, tarot e espiritualidade para iluminar decisões e promover transformações conscientes.</p>
+            <div class="pm-footer-social">
+                <a href="https://www.instagram.com/parada_mistica" target="_blank" rel="noopener" aria-label="Instagram" title="Instagram">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.2" cy="6.8" r="1.1" fill="currentColor" stroke="none"/></svg>
+                </a>
+                <a href="https://www.youtube.com/@Parada_Mistica" target="_blank" rel="noopener" aria-label="YouTube" title="YouTube">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2.5" y="5.5" width="19" height="13" rx="4"/><path d="M10.2 9.3v5.4l4.8-2.7z" fill="currentColor" stroke="none"/></svg>
+                </a>
+                <a href="https://wa.me/5511966509361" target="_blank" rel="noopener" aria-label="WhatsApp" title="WhatsApp">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M6.5 17.5 4 20l2.6-2.4A8 8 0 1 1 12 20a8 8 0 0 1-5.5-2.5Z"/><path d="M9 9.2c0-.6.5-1.2 1.1-1.2h.6c.3 0 .6.2.7.5l.6 1.6c.1.3 0 .6-.2.8l-.6.6c.5 1 1.4 1.9 2.4 2.4l.6-.6c.2-.2.5-.3.8-.2l1.6.6c.3.1.5.4.5.7v.6c0 .6-.6 1.1-1.2 1.1-3.4 0-6.9-3.5-6.9-6.9Z" fill="currentColor" stroke="none"/></svg>
+                </a>
+                <a href="mailto:paradamistica@gmail.com" aria-label="E-mail" title="E-mail">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="5" width="18" height="14" rx="3"/><path d="M4 7l8 6 8-6"/></svg>
+                </a>
+            </div>
+        </div>
+        <div class="pm-footer-col">
+            <h5>Navegação</h5>
+            <a href="index.html">Início</a>
+            <a href="#" title="Página ainda não publicada">Sobre</a>
+            <a href="#" title="Página ainda não publicada">Serviços</a>
+            <a href="#" title="Página ainda não publicada">Blog</a>
+            <a href="#" title="Página ainda não publicada">Contato</a>
+        </div>
+        <div class="pm-footer-col">
+            <h5>Serviços</h5>
+            <a href="#" class="ativo" title="Você está aqui">Tiragem de Cartas</a>
+            <a href="mapas.html">Mapas Astrais</a>
+            <a href="sinastria.html">Sinastria</a>
+            <a href="efemerides.html">Cálculo de Efemérides</a>
+        </div>
+        <div class="pm-footer-col">
+            <h5>Legal</h5>
+            <a href="#" title="Página ainda não publicada">Política de Privacidade</a>
+            <a href="#" title="Página ainda não publicada">Termos de Uso</a>
+            <a href="#" title="Página ainda não publicada">Ética e Responsabilidade</a>
+        </div>
+    </div>
+    <p class="pm-footer-copy">© 2026 Parada Mística. Todos os direitos reservados.</p>
+</footer>
+
+<!-- ══════════════════════════════════════════════════════════
+     SCRIPTS
+═══════════════════════════════════════════════════════════════ -->
+<script src="js/config.js"></script>
+<script src="js/systems.js"></script>
+<script src="js/spreads.js"></script>
+<script src="js/questions.js"></script>
+<script src="js/loader.js"></script>
+<script src="js/custom-decks.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="js/captura.js"></script>
+<script src="js/modal-imagem.js"></script>
+<script src="js/main.js"></script>
+<script src="js/chatbot.js"></script>
+<script src="js/theme.js"></script>
+<script src="js/nav-dropdown.js"></script>
+<script src="js/mobile-menu.js"></script>
+
+</body>
+</html>

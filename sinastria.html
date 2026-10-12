@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sinastria - Parada Mística</title>
+<link rel="icon" href="assets/logo.png">
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="sinastria/css/styles.css">
+<meta name="description" content="Calculadora de sinastria: compare dois mapas astrais e descubra aspectos e casas em comum entre vocês.">
+
+<!-- Open Graph / Facebook, WhatsApp, etc. -->
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://paradamistica.netlify.app/sinastria.html">
+<meta property="og:title" content="Sinastria - Parada Mística">
+<meta property="og:description" content="Calculadora de sinastria: compare dois mapas astrais e descubra aspectos e casas em comum entre vocês.">
+<meta property="og:image" content="https://paradamistica.netlify.app/assets/og-image.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:locale" content="pt_BR">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:url" content="https://paradamistica.netlify.app/sinastria.html">
+<meta name="twitter:title" content="Sinastria - Parada Mística">
+<meta name="twitter:description" content="Calculadora de sinastria: compare dois mapas astrais e descubra aspectos e casas em comum entre vocês.">
+<meta name="twitter:image" content="https://paradamistica.netlify.app/assets/og-image.jpg">
+<script>
+    // Aplica tema antes do render para evitar flash
+    (function(){
+        const t = localStorage.getItem("cartarium_tema") || "sistema";
+        if (t === "escuro" || (t === "sistema" && window.matchMedia("(prefers-color-scheme: dark)").matches)) {
+            document.documentElement.setAttribute("data-tema", "escuro");
+        }
+    })();
+</script>
+</head>
+<body>
+
+<header class="pm-header">
+    <div class="pm-header-inner">
+        <a href="index.html" class="pm-brand">
+            <img src="assets/hamsa-light.png" alt="Parada Mística">
+            <span>Parada Mística</span>
+        </a>
+        <nav class="pm-nav" id="pm-nav-principal">
+            <a href="index.html">Início</a>
+            <a href="#" title="Página ainda não publicada">Sobre</a>
+            <div class="pm-nav-dropdown">
+                <a href="#" class="pm-nav-dropdown-trigger ativo">Serviços ▾</a>
+                <div class="pm-nav-dropdown-menu">
+                    <a href="tiragem-cartas.html">Tiragem de Cartas</a>
+                    <a href="mapas.html">Mapas Astrais</a>
+                    <a href="sinastria.html" class="ativo">Sinastria</a>
+                    <a href="efemerides.html">Efemérides</a>
+                </div>
+            </div>
+            <a href="#" title="Página ainda não publicada">Blog</a>
+            <a href="#" title="Página ainda não publicada">Contato</a>
+        </nav>
+        <div class="pm-header-actions">
+            <button id="btn-tema" class="pm-btn-tema" onclick="ciclaTema()" title="Alternar tema">🌙</button>
+            <a href="#" class="pm-btn-agendar" title="Página ainda não publicada">Agendar Consulta</a>
+            <a href="#" class="pm-avatar" title="Página ainda não publicada"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="3.6"/><path d="M4.5 20c1.4-3.8 4.4-6 7.5-6s6.1 2.2 7.5 6"/></svg></a>
+            <button id="btn-menu-mobile" class="pm-hamburger" aria-label="Abrir menu" aria-expanded="false" aria-controls="pm-nav-principal">
+                <span class="pm-hamburger-bars"><span></span><span></span><span></span></span>
+            </button>
+        </div>
+    </div>
+</header>
+
+<section class="sin-hero">
+  <div class="sin-hero-inner">
+    <div class="logo" aria-hidden="true">
+      <svg viewBox="0 0 120 120">
+        <circle class="ring a" cx="46" cy="60" r="34" stroke="#3644BB"/>
+        <circle class="ring b" cx="74" cy="60" r="34" stroke="#5C8EDC"/>
+        <path class="spark" d="M60 44 L64 56 L76 60 L64 64 L60 76 L56 64 L44 60 L56 56 Z" fill="#F4F3EE"/>
+      </svg>
+    </div>
+    <div class="eyebrow">Serviços · Sinastria</div>
+    <h1>Duas cartas, uma leitura</h1>
+    <p class="sub">Cole abaixo o texto de sinastria (aspectos entre planetas + sobreposição de casas) gerado pelo seu app de astrologia. A calculadora lê os aspectos e devolve um retrato da conexão — compatibilidade, estrutura, destino e os marcadores tradicionais que sustentam a leitura.</p>
+  </div>
+</section>
+
+<div class="wrap">
+
+  <nav class="main-tabs">
+    <button type="button" class="main-tab-btn active" id="tabBtnCalc" data-tab="calcTab">Calculadora</button>
+    <button type="button" class="main-tab-btn" id="tabBtnDict" data-tab="dictTab">Dicionário</button>
+    <button type="button" class="main-tab-btn" id="tabBtnReport" data-tab="reportTab">Relatório</button>
+  </nav>
+
+  <div class="tab-view active" id="calcTab">
+
+  <div class="panel">
+    <h2>1. Tipo de vínculo</h2>
+    <div class="row">
+      <div class="field">
+        <label>Tipo de vínculo</label>
+        <select id="relType" class="field-select">
+          <option value="romantico">Romântico</option>
+          <option value="amizade">Amizade</option>
+          <option value="familia">Família</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <div class="source-toggle" id="sourceToggle">
+    <button type="button" class="source-toggle-btn active" id="sourceToggleCadastro" data-source="cadastro">Usar pessoas cadastradas</button>
+    <button type="button" class="source-toggle-btn" id="sourceToggleColar" data-source="colar">Colar texto manualmente</button>
+  </div>
+
+  <div class="panel" id="colarTextoPanel" style="display:none">
+    <h2>2. Nomes e dados da sinastria</h2>
+    <p class="hint">Preenchidos automaticamente se você usar pessoas cadastradas — ou preencha à mão ao colar o texto.</p>
+    <div class="row">
+      <div class="field">
+        <label>Pessoa 1</label>
+        <input type="text" id="name1" placeholder="Ex: Victor">
+      </div>
+      <div class="field">
+        <label>Pessoa 2</label>
+        <input type="text" id="name2" placeholder="Ex: Alex">
+      </div>
+    </div>
+    <p class="hint">Pode colar o arquivo inteiro (mapas individuais + seção de sinastria + casas) — a calculadora ignora o que não reconhece.</p>
+    <textarea id="raw" placeholder="Cole aqui o texto completo, incluindo as linhas do tipo:&#10;VL's Sun in Pisces Trine DD's Sun in Cancer (Orb: 4°31')&#10;DD's Sun in the 7th VL's house"></textarea>
+    <div class="error" id="errorMsg"></div>
+    <div class="edit-banner" id="editBanner"></div>
+    <br>
+    <button id="calcBtn">Calcular sinastria</button>
+  </div>
+
+  <div class="panel" id="pessoasCadastradasPanel">
+    <h2>2. Usar pessoas cadastradas</h2>
+    <p class="hint">Escolha duas pessoas já cadastradas (em Mapas Astrais) para calcular a sinastria direto, sem colar texto.</p>
+    <div class="row">
+      <div class="field">
+        <label>Pessoa 1</label>
+        <select id="pessoaSelectA" class="field-select"></select>
+      </div>
+      <div class="field" style="max-width:120px;">
+        <label>Sigla 1</label>
+        <input type="text" id="pessoaSiglaA" class="field-select" maxlength="6" style="text-transform:uppercase;" placeholder="ex: VL">
+      </div>
+    </div>
+    <div class="row">
+      <div class="field">
+        <label>Pessoa 2</label>
+        <select id="pessoaSelectB" class="field-select"></select>
+      </div>
+      <div class="field" style="max-width:120px;">
+        <label>Sigla 2</label>
+        <input type="text" id="pessoaSiglaB" class="field-select" maxlength="6" style="text-transform:uppercase;" placeholder="ex: DD">
+      </div>
+    </div>
+    <p class="hint">A sigla é o identificador usado no texto gerado (ex: "VL's Sun...") — vem preenchida da pessoa cadastrada, mas pode editar aqui antes de calcular. Sem sigla, usa o nome.</p>
+    <button type="button" id="calcFromPessoasBtn" class="pm-pessoa-btn primary" style="margin-top:4px;">Calcular sinastria com estes dados</button>
+    <div class="hint" id="pessoasCadastradasMsg" style="margin-top:8px;"></div>
+  </div>
+
+  <div class="edit-banner" id="viewBanner" style="display:none;"></div>
+
+  <div id="results">
+    <div class="orbit-divider"><span></span></div>
+
+    <div class="names"><span id="rName1"></span><span class="amp">&amp;</span><span id="rName2"></span></div>
+    <div class="meta-line" id="metaLine"></div>
+    <div class="confidence-note" id="confidenceNote" style="display:none;"></div>
+
+    <div class="panel">
+      <div class="cat-section">
+        <div class="cat-section-head">
+          <h3>Marcadores por área</h3>
+          <p>Cada área (<strong>Intelectual, Emocional, Sexual/Paixão, Prático/Compromisso</strong>) é lida a partir dos seus próprios marcadores clássicos de sinastria — não é uma divisão de um total fixo, então duas áreas podem estar fortes ao mesmo tempo sem uma "roubar" espaço da outra.</p>
+          <ul class="legend-list">
+            <li><strong>Tamanho da barra</strong> — o quanto essa área está presente no mapa (quantos marcadores dela apareceram, e quão exatos).</li>
+            <li><strong>Cor da barra</strong> — se, entre os marcadores encontrados, predomina o lado que flui (🟢) ou o que atrita (🔴).</li>
+          </ul>
+        </div>
+        <div class="bars" id="bars"></div>
+      </div>
+
+      <div class="stat-row">
+        <div class="stat">
+          <div class="val" id="compatVal">—</div>
+          <div class="lbl">Compatibilidade Geral</div>
+          <details class="explainer" id="compatExplainer">
+            <summary><span id="compatExplainerSummary">Combina Atração e Estrutura — só fica alta quando os dois eixos são bons.</span><span class="explainer-toggle"></span></summary>
+            <div class="explainer-body" id="compatExplainerBody">
+              <ul>
+                <li>Média <strong>geométrica</strong> entre Atração e Estrutura (não simples) — um eixo forte não "carrega" sozinho o outro fraco.</li>
+                <li><strong>Afinidade</strong> (Júpiter) entra depois, só como ajuste fino de até <span class="fx">±3,6 pts</span> — não decide sozinha, só tempera.</li>
+              </ul>
+            </div>
+          </details>
+        </div>
+        <div class="stat">
+          <div class="val" id="harmonyVal">—</div>
+          <div class="lbl">Harmonia geral (aspectos com curadoria)</div>
+          <details class="explainer">
+            <summary>% do peso astrológico que vem de aspectos fáceis, em vez de tensos.<span class="explainer-toggle"></span></summary>
+            <div class="explainer-body">
+              <ul>
+                <li><strong>Fáceis:</strong> trígono, sextil, conjunção. <strong>Tensos:</strong> quadratura, oposição.</li>
+                <li>Considera só os aspectos já reconhecidos como significativos em alguma categoria de conteúdo (Intelectual, Emocional, Atração, Prático, Afinidade) <strong>ou</strong> em algum eixo (Estrutura, Destino).</li>
+                <li>Útil como referência ampla, mas pode mascarar tensão concentrada num só dos dois eixos abaixo.</li>
+              </ul>
+            </div>
+          </details>
+        </div>
+      </div>
+      <div class="stat-row">
+        <div class="stat">
+          <div class="val" id="structureVal">—</div>
+          <div class="lbl">Estrutura (longo prazo)</div>
+          <details class="explainer">
+            <summary>Harmonia só nos eixos de permanência.<span class="explainer-toggle"></span></summary>
+            <div class="explainer-body">
+              <ul>
+                <li>Inclui: <strong>Sol-Lua, Lua-Lua, Mercúrio-Mercúrio, Saturno</strong>, MC/IC/DSC e Quíron com pessoais/ângulos.</li>
+                <li><strong>Nodo e Vértice não entram aqui</strong> — são medidos separado, no eixo Destino ao lado.</li>
+              </ul>
+            </div>
+          </details>
+        </div>
+        <div class="stat">
+          <div class="val" id="destinyVal">—</div>
+          <div class="lbl">Destino</div>
+          <details class="explainer">
+            <summary>Harmonia no eixo Destino: Nodo e Vértice.<span class="explainer-toggle"></span></summary>
+            <div class="explainer-body">
+              <ul>
+                <li>Nodo (Norte/Sul) e Vértice tocando um <strong>pessoal do parceiro</strong>, ou os dois eixos nodais entre si.</li>
+                <li>Harmônico <strong>e</strong> tenso contam aqui — diferente de Estrutura, este eixo não filtra só o atrito.</li>
+                <li>A leitura "Atração" que ficava aqui foi removida por duplicar exatamente a barra Sexual/Paixão-Afeição, na seção "Marcadores por área".</li>
+              </ul>
+            </div>
+          </details>
+        </div>
+      </div>
+      <div class="stat-row">
+        <div class="stat">
+          <div class="val" id="strengthVal">—</div>
+          <div class="lbl">Nitidez da conexão</div>
+          <details class="explainer">
+            <summary>% de aspectos muito exatos (orbe apertado).<span class="explainer-toggle"></span></summary>
+            <div class="explainer-body">
+              <ul>
+                <li>Conta só entre os aspectos já reconhecidos por alguma categoria de conteúdo ou eixo — mesmo pool curado da Harmonia geral, ao lado.</li>
+                <li>Quanto maior, mais "carregado"/nítido é o mapa entre vocês, nesse universo já validado — não em qualquer aspecto que apareça no relatório.</li>
+                <li>No Veredito, não soma como peso próprio: atua como <strong>intensificador</strong>, empurrando a leitura mais forte na direção que o resto da métrica já indicar.</li>
+              </ul>
+            </div>
+          </details>
+        </div>
+        <div class="stat stat-highlight">
+          <div class="val" id="potentialVal">—</div>
+          <div class="lbl">Veredito</div>
+          <details class="explainer">
+            <summary>Métrica derivada em duas etapas: base ponderada + intensificador.<span class="explainer-toggle"></span></summary>
+            <div class="explainer-body">
+              <div class="explainer-step">Etapa 1 — Base (soma 100%)</div>
+              <div class="fx-formula"><span class="fx">50%</span> Compatibilidade Geral&nbsp;+&nbsp;<span class="fx">31,25%</span> Harmonia geral&nbsp;+&nbsp;<span class="fx">18,75%</span> Destino/Estrutura*</div>
+              <p class="fx-note">*Em vínculos <strong>românticos</strong>: Destino puro (Nodo/Vértice), já que Estrutura entra na Compatibilidade Geral. Em <strong>amizade/família</strong>: média de Estrutura e Destino, já que nenhum dos dois entra ali.</p>
+              <div class="explainer-step">Etapa 2 — Intensificador</div>
+              <p>A <strong>Nitidez da conexão</strong> amplifica essa base pra mais perto do extremo harmônico ou tenso que ela já aponta — mais nitidez não torna o vínculo "melhor" sozinha, só torna a leitura (seja ela qual for) mais decisiva.</p>
+            </div>
+          </details>
+        </div>
+      </div>
+      <div class="compat-note" id="compatNote" style="display:none;"></div>
+
+      <div class="markers" id="markers" style="display:none;"></div>
+    </div>
+
+    <div class="verdict">
+      <div class="tag">Leitura sugerida</div>
+      <h3 id="verdictTitle"></h3>
+      <p id="verdictDesc"></p>
+    </div>
+
+    <details class="debug">
+      <summary>Ver dados brutos interpretados</summary>
+      <div id="debugContent"></div>
+    </details>
+
+  </div>
+
+  <div class="orbit-divider"><span></span></div>
+
+  <div class="panel" id="comparePanel">
+    <div class="panel-headline">
+      <h2>3. Comparar sinastrias</h2>
+      <div class="headline-actions">
+        <select id="filterRelType" title="Filtrar por tipo de vínculo"></select>
+        <select id="sortBy">
+          <option value="recent">Mais recentes</option>
+          <option value="alphabetical">Ordem alfabética (A-Z)</option>
+          <option value="potential">Melhor em veredito</option>
+          <option value="compatibility">Maior compatibilidade geral</option>
+          <option value="harmony">Maior harmonia geral</option>
+          <option value="destiny">Maior harmonia no eixo Destino</option>
+          <option value="strength">Maior nitidez</option>
+          <option value="markers">Mais marcadores especiais</option>
+          <option value="cat_sexual">Melhor em Sexual / Paixão</option>
+          <option value="cat_pratico">Melhor em Prático / Compromisso</option>
+          <option value="cat_emocional">Melhor em Emocional</option>
+          <option value="cat_intelectual">Melhor em Intelectual</option>
+          <option value="cat_afinidade">Melhor em Afinidade</option>
+        </select>
+        <button type="button" class="ghost-btn" id="recalcAllBtn" title="Reaplica a lógica de pontuação atual em cima do texto original salvo de cada sinastria">Recalcular tudo</button>
+        <button type="button" class="ghost-btn" id="exportCsvBtn">Exportar CSV</button>
+        <button type="button" class="ghost-btn" id="exportJsonBtn">Exportar JSON</button>
+        <button type="button" class="ghost-btn" id="importJsonBtn">Importar JSON</button>
+        <input type="file" id="importJsonInput" accept=".json,application/json" style="display:none;">
+        <button type="button" class="ghost-btn" id="clearAllBtn">Limpar tudo</button>
+      </div>
+    </div>
+    <p class="hint">Toda vez que você calcular uma sinastria acima, ela entra automaticamente nesta lista — assim dá pra comparar vários pares (ou vários candidatos pra uma mesma pessoa) lado a lado. Os dados ficam salvos neste navegador.</p>
+    <div class="compare-counts" id="compareCounts"></div>
+    <div class="storage-warning" id="storageWarning">⚠ Seu navegador não deixou salvar os dados localmente (comum em aba anônima/privada). A comparação ainda funciona, mas some se você recarregar a página — exporte em CSV/JSON antes de fechar se quiser guardar.</div>
+    <div id="compareList"><div class="compare-empty">Nenhuma sinastria calculada ainda. Calcule a primeira acima pra começar a comparação.</div></div>
+  </div>
+
+  </div>
+
+  <div class="tab-view" id="dictTab">
+
+  <div class="panel dict-panel" id="dictionaryPanel">
+    <div class="panel-headline">
+      <h2>Dicionário de significados</h2>
+      <div class="headline-actions">
+        <button type="button" class="ghost-btn" id="exportDictBtn">Exportar JSON</button>
+        <button type="button" class="ghost-btn" id="importDictBtn">Importar JSON</button>
+        <input type="file" id="importDictInput" accept=".json,application/json" style="display:none;">
+        <button type="button" class="ghost-btn" id="clearAllDictBtn">Limpar tudo</button>
+      </div>
+    </div>
+    <p class="hint">Cadastre o significado de cada aspecto e posição de casa encontrados numa sinastria — ordenados do mais pro menos importante (mesmo peso real usado no resto da calculadora: orbe + tier do par). Cada significado pode ser <strong>único desta sinastria</strong> ou <strong>reutilizável</strong> (aplicado automaticamente sempre que o mesmo padrão aparecer, em qualquer sinastria, pra todos os vínculos ou só pra um tipo). Clique numa linha pra abrir e editar.</p>
+    <div class="dict-select-row">
+      <label for="dictSynastrySelect">Ver padrões de:</label>
+      <select id="dictSynastrySelect"></select>
+      <button type="button" class="ghost-btn" id="clearSynastryDictBtn" title="Remove só os significados marcados como 'Só nesta sinastria'. Os reutilizáveis (para todos os vínculos ou para a categoria dela) continuam valendo.">Limpar esta sinastria</button>
+    </div>
+    <div class="dict-select-row" style="margin-bottom:20px;">
+      <label for="dictFilterSelect">Filtrar:</label>
+      <select id="dictFilterSelect"></select>
+      <label class="chk" title="Padrões cujo orbe passou do teto específico do tipo de astro (Quíron/Lilith/Nodo/Vértice/Fortuna/transpessoais) — considerados irrelevantes, peso zerado.">
+        <input type="checkbox" id="dictShowZeroed"> Mostrar zerados
+      </label>
+    </div>
+
+    <div class="dict-prompt-cfg open" id="dictPromptCfg">
+      <div class="dict-prompt-cfg-head" id="dictPromptCfgHead">
+        <div>
+          <span class="dict-prompt-cfg-title">Configurar prompt de preenchimento</span>
+          <p class="dict-prompt-cfg-hint">Defina nomes, siglas e o contexto do vínculo uma vez — cada linha abaixo ganha um botão "Copiar prompt" já preenchido.</p>
+        </div>
+      </div>
+      <div class="dict-prompt-cfg-body" id="dictPromptCfgBody">
+        <div class="dict-prompt-cfg-row">
+          <div class="field name-field">
+            <label>Nome — Pessoa 1</label>
+            <input type="text" id="pcName1" placeholder="Ex: Victor">
+          </div>
+          <div class="field sigla-field">
+            <label>Sigla</label>
+            <input type="text" id="pcSigla1" placeholder="Ex: VL">
+          </div>
+          <div class="field name-field">
+            <label>Nome — Pessoa 2</label>
+            <input type="text" id="pcName2" placeholder="Ex: Pedro">
+          </div>
+          <div class="field sigla-field">
+            <label>Sigla</label>
+            <input type="text" id="pcSigla2" placeholder="Ex: MP">
+          </div>
+        </div>
+        <div class="dict-prompt-cfg-row" style="margin-top:-4px;">
+          <button type="button" class="ghost-btn" id="pcDetectSiglas" style="padding:7px 14px; font-size:12px;">Detectar siglas automaticamente</button>
+          <span class="dict-prompt-cfg-hint" style="margin:0; align-self:center;">Lê as siglas (ex: DD, MEV) que aparecem nos aspectos desta sinastria e preenche os campos acima.</span>
+        </div>
+        <div class="dict-prompt-cfg-row">
+          <div class="field" style="flex:1 1 100%;">
+            <label>Contexto do vínculo (o que entra em "num contexto de...")</label>
+            <input type="text" id="pcContext" placeholder="Ex: webnamoro">
+          </div>
+        </div>
+        <div class="dict-prompt-cfg-preview" id="dictPromptCfgPreview"></div>
+      </div>
+    </div>
+
+    <div class="dict-toggle-all-row">
+      <button type="button" class="ghost-btn" id="toggleAllDictBtn">Expandir tudo</button>
+    </div>
+    <div id="dictionaryList" class="dict-list"></div>
+  </div>
+
+  </div>
+
+  <div class="tab-view" id="reportTab">
+
+  <div class="panel">
+    <div class="panel-headline">
+      <h2>Relatório</h2>
+    </div>
+    <p class="hint">Escolha uma ou mais sinastrias já calculadas e gere um PDF (pela função de imprimir do navegador — escolha "Salvar como PDF" no destino da impressão). Com uma relação só, o relatório apresenta e descreve; com duas ou mais, ele também monta uma tabela comparativa entre elas.</p>
+
+    <div class="report-section">
+      <div class="report-section-head">
+        <label>Sinastrias a incluir</label>
+        <div class="report-select-actions">
+          <button type="button" class="ghost-btn" id="reportSelectAllBtn">Marcar todas</button>
+          <button type="button" class="ghost-btn" id="reportSelectNoneBtn">Desmarcar todas</button>
+        </div>
+      </div>
+      <div id="reportSynastryList" class="report-check-list"></div>
+    </div>
+
+    <div class="report-section">
+      <div class="report-section-head">
+        <label>O que incluir no relatório</label>
+        <div class="report-select-actions">
+          <button type="button" class="ghost-btn" id="reportOptsSelectAllBtn">Marcar todas</button>
+          <button type="button" class="ghost-btn" id="reportOptsSelectNoneBtn">Desmarcar todas</button>
+        </div>
+      </div>
+      <div class="report-check-list report-options-list">
+        <label class="report-check-item"><input type="checkbox" id="repSecResumo" checked> Perfil e veredito</label>
+        <label class="report-check-item"><input type="checkbox" id="repSecNumeros" checked> Números principais (compatibilidade, potencial, harmonia, estrutura, destino, nitidez)</label>
+        <label class="report-check-item"><input type="checkbox" id="repSecCategorias" checked> Categorias (Afeição, Prático, Emocional, Intelectual, Afinidade)</label>
+        <label class="report-check-item"><input type="checkbox" id="repSecMarcadores" checked> Marcadores narrativos (Saturno, Nodo, Vértice, Quíron, Lilith...)</label>
+        <label class="report-check-item"><input type="checkbox" id="repSecSignificados" checked> Significados cadastrados no dicionário</label>
+        <label class="report-check-item"><input type="checkbox" id="repSecComparativo" checked> Tabela comparativa <span class="report-check-note">(entra automaticamente quando 2+ sinastrias estão marcadas)</span></label>
+      </div>
+    </div>
+
+    <div class="error" id="reportError"></div>
+    <button type="button" id="generateReportBtn">Gerar PDF</button>
+  </div>
+
+  </div>
+
+  <section class="cta-banner">
+    <div class="cta-banner-bg sin-cta-bg"></div>
+    <div class="cta-banner-inner">
+      <div class="cta-banner-text">
+        <h2>Receba uma análise completa e personalizada</h2>
+        <p>A sinastria completa revela muito mais do que os números. Descubra todos os detalhes da conexão entre vocês.</p>
+        <a href="#" class="cta-banner-btn" title="Página ainda não publicada">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3.5" y="5" width="17" height="16" rx="2.4"/><path d="M3.5 9.5h17M8 3v4M16 3v4"/></svg>
+          Agendar Consulta
+        </a>
+        <div class="cta-social">
+          <div class="cta-avatars">
+            <span class="cta-avatar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="3.6"/><path d="M4.5 20c1.4-3.8 4.4-6 7.5-6s6.1 2.2 7.5 6"/></svg></span>
+            <span class="cta-avatar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="3.6"/><path d="M4.5 20c1.4-3.8 4.4-6 7.5-6s6.1 2.2 7.5 6"/></svg></span>
+            <span class="cta-avatar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="3.6"/><path d="M4.5 20c1.4-3.8 4.4-6 7.5-6s6.1 2.2 7.5 6"/></svg></span>
+            <span class="cta-avatar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="3.6"/><path d="M4.5 20c1.4-3.8 4.4-6 7.5-6s6.1 2.2 7.5 6"/></svg></span>
+            <span class="cta-avatar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="3.6"/><path d="M4.5 20c1.4-3.8 4.4-6 7.5-6s6.1 2.2 7.5 6"/></svg></span>
+          </div>
+          <div class="cta-social-text"><strong>+1.200 pessoas</strong><br>já se conheceram melhor</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    Isso é uma leitura simbólica de entretenimento baseada em pesos heurísticos entre planetas, aspectos e casas — não é um veredito científico sobre a relação de vocês :)
+  </footer>
+</div>
+
+<div id="reportPrintArea"></div>
+
+<footer class="pm-footer">
+    <img src="assets/hamsa-outline.png" class="pm-footer-watermark" alt="">
+    <div class="pm-footer-inner">
+        <div class="pm-footer-col pm-footer-about">
+            <div class="pm-footer-brand">
+                <img src="assets/hamsa-light.png" alt="Parada Mística">
+                <span>Parada Mística</span>
+            </div>
+            <p>Astrologia, tarot e espiritualidade para iluminar decisões e promover transformações conscientes.</p>
+            <div class="pm-footer-social">
+                <a href="https://www.instagram.com/parada_mistica" target="_blank" rel="noopener" aria-label="Instagram" title="Instagram">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.2" cy="6.8" r="1.1" fill="currentColor" stroke="none"/></svg>
+                </a>
+                <a href="https://www.youtube.com/@Parada_Mistica" target="_blank" rel="noopener" aria-label="YouTube" title="YouTube">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2.5" y="5.5" width="19" height="13" rx="4"/><path d="M10.2 9.3v5.4l4.8-2.7z" fill="currentColor" stroke="none"/></svg>
+                </a>
+                <a href="https://wa.me/5511966509361" target="_blank" rel="noopener" aria-label="WhatsApp" title="WhatsApp">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M6.5 17.5 4 20l2.6-2.4A8 8 0 1 1 12 20a8 8 0 0 1-5.5-2.5Z"/><path d="M9 9.2c0-.6.5-1.2 1.1-1.2h.6c.3 0 .6.2.7.5l.6 1.6c.1.3 0 .6-.2.8l-.6.6c.5 1 1.4 1.9 2.4 2.4l.6-.6c.2-.2.5-.3.8-.2l1.6.6c.3.1.5.4.5.7v.6c0 .6-.6 1.1-1.2 1.1-3.4 0-6.9-3.5-6.9-6.9Z" fill="currentColor" stroke="none"/></svg>
+                </a>
+                <a href="mailto:paradamistica@gmail.com" aria-label="E-mail" title="E-mail">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="5" width="18" height="14" rx="3"/><path d="M4 7l8 6 8-6"/></svg>
+                </a>
+            </div>
+        </div>
+        <div class="pm-footer-col">
+            <h5>Navegação</h5>
+            <a href="index.html">Início</a>
+            <a href="#" title="Página ainda não publicada">Sobre</a>
+            <a href="#" class="ativo" title="Página ainda não publicada">Serviços</a>
+            <a href="#" title="Página ainda não publicada">Blog</a>
+            <a href="#" title="Página ainda não publicada">Contato</a>
+        </div>
+        <div class="pm-footer-col">
+            <h5>Serviços</h5>
+            <a href="tiragem-cartas.html">Tiragem de Cartas</a>
+            <a href="mapas.html">Mapas Astrais</a>
+            <a href="#" class="ativo" title="Você está aqui">Sinastria</a>
+            <a href="efemerides.html">Cálculo de Efemérides</a>
+        </div>
+        <div class="pm-footer-col">
+            <h5>Legal</h5>
+            <a href="#" title="Página ainda não publicada">Política de Privacidade</a>
+            <a href="#" title="Página ainda não publicada">Termos de Uso</a>
+            <a href="#" title="Página ainda não publicada">Ética e Responsabilidade</a>
+        </div>
+    </div>
+    <p class="pm-footer-copy">© 2026 Parada Mística. Todos os direitos reservados.</p>
+</footer>
+
+<script src="js/theme.js"></script>
+<script src="js/nav-dropdown.js"></script>
+<script src="js/mobile-menu.js"></script>
+<script type="module" src="sinastria/js/main.js"></script>
+</body>
+</html>

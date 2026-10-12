@@ -1,0 +1,24 @@
+# Configuração de deploy do Netlify para a Parada Mística.
+# Site 100% estático (HTML/CSS/JS puro) — não há passo de build.
+
+[build]
+  publish = "."
+  command = ""
+
+# Cache agressivo para os assets versionados por conteúdo (imagens dos
+# baralhos e fontes). Se algum desses arquivos for substituído, o nome do
+# arquivo também deve mudar (ou o cache pode segurar a versão antiga no
+# navegador).
+#
+# /decks/*.js NÃO entra aqui de propósito: as definições de baralho mudam
+# (ex.: significados e créditos são ajustados com frequência) e precisam
+# chegar a quem já visitou o site. Sem regra, o Netlify revalida a cada visita.
+[[headers]]
+  for = "/images/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/assets/fonts/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"

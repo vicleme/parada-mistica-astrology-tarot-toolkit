@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Efemérides - Parada Mística</title>
+<link rel="icon" href="assets/logo.png">
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="efemerides/css/styles.css">
+<meta name="description" content="Calcule trânsitos individuais e trânsitos duplos com precisão. Descubra como os astros se movem sobre o seu mapa natal ou sobre uma relação.">
+
+<!-- Open Graph / Facebook, WhatsApp, etc. -->
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://paradamistica.netlify.app/efemerides.html">
+<meta property="og:title" content="Efemérides - Parada Mística">
+<meta property="og:description" content="Calcule trânsitos individuais e trânsitos duplos com precisão. Descubra como os astros se movem sobre o seu mapa natal ou sobre uma relação.">
+<meta property="og:image" content="https://paradamistica.netlify.app/assets/og-image.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:locale" content="pt_BR">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:url" content="https://paradamistica.netlify.app/efemerides.html">
+<meta name="twitter:title" content="Efemérides - Parada Mística">
+<meta name="twitter:description" content="Calcule trânsitos individuais e trânsitos duplos com precisão. Descubra como os astros se movem sobre o seu mapa natal ou sobre uma relação.">
+<meta name="twitter:image" content="https://paradamistica.netlify.app/assets/og-image.jpg">
+<script>
+    // Aplica tema antes do render para evitar flash
+    (function(){
+        const t = localStorage.getItem("cartarium_tema") || "sistema";
+        if (t === "escuro" || (t === "sistema" && window.matchMedia("(prefers-color-scheme: dark)").matches)) {
+            document.documentElement.setAttribute("data-tema", "escuro");
+        }
+    })();
+</script>
+</head>
+<body>
+
+<header class="pm-header">
+    <div class="pm-header-inner">
+        <a href="index.html" class="pm-brand">
+            <img src="assets/hamsa-light.png" alt="Parada Mística">
+            <span>Parada Mística</span>
+        </a>
+        <nav class="pm-nav" id="pm-nav-principal">
+            <a href="index.html">Início</a>
+            <a href="#" title="Página ainda não publicada">Sobre</a>
+            <div class="pm-nav-dropdown">
+                <a href="#" class="pm-nav-dropdown-trigger ativo">Serviços ▾</a>
+                <div class="pm-nav-dropdown-menu">
+                    <a href="tiragem-cartas.html">Tiragem de Cartas</a>
+                    <a href="mapas.html">Mapas Astrais</a>
+                    <a href="sinastria.html">Sinastria</a>
+                    <a href="efemerides.html" class="ativo">Efemérides</a>
+                </div>
+            </div>
+            <a href="#" title="Página ainda não publicada">Blog</a>
+            <a href="#" title="Página ainda não publicada">Contato</a>
+        </nav>
+        <div class="pm-header-actions">
+            <button id="btn-tema" class="pm-btn-tema" onclick="ciclaTema()" title="Alternar tema">🌙</button>
+            <a href="#" class="pm-btn-agendar" title="Página ainda não publicada">Agendar Consulta</a>
+            <a href="#" class="pm-avatar" title="Página ainda não publicada"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="3.6"/><path d="M4.5 20c1.4-3.8 4.4-6 7.5-6s6.1 2.2 7.5 6"/></svg></a>
+            <button id="btn-menu-mobile" class="pm-hamburger" aria-label="Abrir menu" aria-expanded="false" aria-controls="pm-nav-principal">
+                <span class="pm-hamburger-bars"><span></span><span></span><span></span></span>
+            </button>
+        </div>
+    </div>
+</header>
+
+<section class="efem-hero-section">
+  <div class="efem-hero">
+    <span class="pm-breadcrumb">Serviços &gt; <b>Efemérides</b></span>
+    <h1>Efemérides <span class="efem-hero-spark">✦</span></h1>
+    <div class="subtitle">Veja como os astros de agora (ou de qualquer data) se movem sobre o seu mapa natal ou sobre uma relação — trânsitos individuais e trânsitos duplos.</div>
+    <div class="eyebrow">Sistema pessoal de trânsitos · não substitui interpretação profissional</div>
+  </div>
+</section>
+
+<main>
+
+<div class="tabs">
+  <div class="tab active" id="tabTransitos" onclick="setView('transitos')">Trânsitos individuais</div>
+  <div class="tab" id="tabDuplos" onclick="setView('duplos')">Trânsitos duplos</div>
+  <div class="tab" id="tabComposto" onclick="setView('composto')">Sobre o composto</div>
+</div>
+
+<div id="viewTransitos">
+
+<div class="note note-precisao">
+  <p class="note-titulo">⚠️ Sobre a precisão dos cálculos</p>
+  <ul>
+    <li><strong>Planetas:</strong> elementos orbitais keplerianos, válidos entre <em>~1900–2100</em>, com precisão de poucos minutos de arco.</li>
+    <li><strong>Lua:</strong> série de termos periódicos, com precisão de <em>~1 minuto de arco</em>.</li>
+    <li><strong>Quíron:</strong> elementos osculadores fixos (sem taxas seculares de precessão do nó/periélio) — confiável para décadas próximas de <em>2000–2050</em>, com erro crescente fora desse intervalo, já que sua órbita sofre perturbação de Saturno e Júpiter.</li>
+    <li><strong>Ascendente / Meio-do-Céu / Casas:</strong> fórmulas padrão de tempo sideral.</li>
+    <li><strong>Sistemas de casas disponíveis:</strong> Signos Inteiros, Casas Iguais e Placidus <span class="note-dim">(cálculo iterativo por trisecção do arco semi-diurno/noturno; pode falhar em latitudes muito próximas dos polos, caindo automaticamente para Casas Iguais nesse caso)</span>.</li>
+  </ul>
+  <p class="note-rodape">Para decisões finas perto de uma cúspide, vale conferir num software de referência.</p>
+</div>
+
+<!-- ===================== MAPA NATAL ===================== -->
+<div class="panel">
+  <h2>1. Mapa natal (referência)</h2>
+  <label>Pessoa cadastrada</label>
+  <select id="natalPessoaSelect"></select>
+  <div class="hint" style="margin-bottom:10px;">Escolha uma pessoa já cadastrada (em Mapas Astrais) pra carregar os dados dela, ou preencha um mapa avulso abaixo sem cadastrar ninguém.</div>
+  <div class="row" style="grid-template-columns:2fr 1fr;">
+    <div>
+      <label>Nome (opcional, só usado se você salvar esta pessoa no cadastro)</label>
+      <input type="text" id="natalName" placeholder="ex: Victor">
+    </div>
+    <div>
+      <label>Sigla</label>
+      <input type="text" id="natalSigla" placeholder="ex: VL" maxlength="6" style="text-transform:uppercase;">
+    </div>
+  </div>
+  <div class="hint" style="margin:4px 0 10px;">A sigla identifica esta pessoa no texto da Calculadora de Sinastria (ex: "VL's Sun..."). Se ficar em branco, usa o Nome.</div>
+  <div class="row3">
+    <div>
+      <label>Nascimento</label>
+      <input type="date" id="natalDate">
+    </div>
+    <div>
+      <label>Hora</label>
+      <input type="time" id="natalTime">
+      <div class="hint">Sem hora → assume 12:00 e desativa Ascendente/Casas.</div>
+    </div>
+    <div>
+      <label>Fuso horário (UTC)</label>
+      <input type="number" id="natalTz" step="0.5" placeholder="ex: -3">
+    </div>
+  </div>
+  <label>Buscar cidade (preenche latitude/longitude automaticamente)</label>
+  <div class="row" style="grid-template-columns:1fr auto;">
+    <input type="text" id="citySearch" placeholder="ex: Santos, SP, Brasil" onkeydown="if(event.key==='Enter'){event.preventDefault();searchCity();}">
+    <button class="btn small" style="margin-top:0;" onclick="searchCity()">Buscar</button>
+  </div>
+  <div id="cityResults"></div>
+  <div class="hint">Busca via OpenStreetMap (Nominatim). Se não houver internet ou a busca falhar, preencha lat/long manualmente abaixo.</div>
+  <div class="row">
+    <div>
+      <label>Latitude (decimal, + Norte / − Sul)</label>
+      <input type="number" id="natalLat" step="0.0001" placeholder="ex: -23.9608 (Santos)">
+    </div>
+    <div>
+      <label>Longitude (decimal, + Leste / − Oeste)</label>
+      <input type="number" id="natalLon" step="0.0001" placeholder="ex: -46.3336 (Santos)">
+    </div>
+  </div>
+  <div class="row">
+    <div>
+      <label>Sistema de casas</label>
+      <select id="houseSystem">
+        <option value="whole">Signos Inteiros</option>
+        <option value="equal">Casas Iguais</option>
+        <option value="placidus">Placidus</option>
+      </select>
+    </div>
+    <div></div>
+  </div>
+  <div class="divider"></div>
+  <div class="toolbar" style="margin-bottom:12px;">
+    <button class="btn secondary small" onclick="salvarNatalNoCadastro()">Salvar no cadastro</button>
+    <button class="btn secondary small" onclick="exportNatalInput()">Exportar dados (JSON)</button>
+    <button class="btn secondary small" onclick="toggleImportBox()">Importar dados (JSON)</button>
+    <button class="btn secondary small" onclick="clearNatalStorage()">Esquecer dados salvos</button>
+  </div>
+  <div class="hint" id="natalPessoaMsg" style="margin-bottom:12px;"></div>
+  <div class="hint" style="margin-bottom:12px;">Seus dados de nascimento ficam salvos só neste navegador (localStorage) e são recarregados automaticamente na próxima visita — nada é enviado para fora.</div>
+  <div id="importBox" style="display:none; margin-bottom:16px;">
+    <label>Colar JSON aqui</label>
+    <textarea id="importJsonText" rows="4" style="width:100%; background:var(--input-bg); border:1px solid var(--line); color:var(--text); padding:9px 10px; border-radius:6px; font-family:inherit; font-size:12.5px;" placeholder='{"data_nascimento":"1990-05-15","hora_nascimento":"14:30","fuso_horario":-3,"latitude":-23.5505,"longitude":-46.6333,"sistema_casas":"placidus"}'></textarea>
+    <div class="row" style="margin-top:8px; align-items:flex-end;">
+      <div>
+        <label>...ou selecione um arquivo .json</label>
+        <input type="file" id="importJsonFile" accept="application/json,.json">
+      </div>
+      <div>
+        <button class="btn small" onclick="importNatalInput()">Carregar dados</button>
+      </div>
+    </div>
+    <div class="hint" id="importStatus" style="margin-top:6px;"></div>
+  </div>
+  <button class="btn" onclick="calcNatal()">Calcular mapa natal</button>
+  <div class="hint" id="natalMsg" style="margin-top:8px;"></div>
+  <div class="divider"></div>
+  <div id="natalOutput"><div class="empty">Preencha os dados e calcule para ver seu mapa natal aqui.</div></div>
+</div>
+
+<!-- ===================== TRÂNSITOS ===================== -->
+<div class="panel">
+  <h2>2. Trânsitos</h2>
+  <div class="mode-toggle">
+    <div class="mode-btn active" id="modeSingleBtn" onclick="setMode('single')">Momento exato</div>
+    <div class="mode-btn" id="modeRangeBtn" onclick="setMode('range')">Intervalo / ano</div>
+  </div>
+
+  <div id="singleFields">
+    <div class="row3">
+      <div><label>Data</label><input type="date" id="singleDate"></div>
+      <div><label>Hora</label><input type="time" id="singleTime"><div class="hint">Padrão: 12:00</div></div>
+      <div><label>Fuso (UTC)</label><input type="number" id="singleTz" step="0.5" placeholder="ex: -3"></div>
+    </div>
+    <button class="btn secondary small" style="margin-top:10px;" onclick="fillNow()">Preencher com agora</button>
+  </div>
+
+  <div id="rangeFields" style="display:none">
+    <div class="row3">
+      <div><label>Data inicial</label><input type="date" id="rangeStart" oninput="updateRangeWarn()"></div>
+      <div><label>Data final</label><input type="date" id="rangeEnd" oninput="updateRangeWarn()"></div>
+      <div><label>Passo (dias)</label><input type="number" id="rangeStep" value="1" min="1" max="10" oninput="updateRangeWarn()"></div>
+    </div>
+    <div class="hint" style="margin:8px 0 4px;">Atalhos de período (a partir de hoje):</div>
+    <div class="preset-row">
+      <button type="button" class="btn secondary small" onclick="fillPreset('hoje')">Hoje</button>
+      <button type="button" class="btn secondary small" onclick="fillPreset('semana')">Esta semana</button>
+      <button type="button" class="btn secondary small" onclick="fillPreset('mes')">Este mês</button>
+      <button type="button" class="btn secondary small" onclick="fillPreset('semestre')">Este semestre</button>
+      <button type="button" class="btn secondary small" onclick="fillPreset('ano')">Este ano</button>
+    </div>
+    <div class="hint">Para "todos os trânsitos de 1 ano", use 01/01 a 31/12. Para vários anos, apenas amplie o intervalo (períodos longos podem levar alguns segundos para calcular).</div>
+    <div class="hint" id="rangeWarn" style="margin-top:6px;"></div>
+  </div>
+
+  <button class="btn" onclick="calcTransits()">Calcular trânsitos</button>
+  <div id="transitStatus" class="hint" style="margin-top:8px;"></div>
+</div>
+
+<!-- ===================== RESULTADOS ===================== -->
+<div class="panel" id="resultsPanel" style="display:none;">
+  <h2>3. Posições em trânsito</h2>
+  <div class="scroll-hint">↔ as tabelas têm mais colunas do que cabem na tela — arraste para os lados para ver tudo.</div>
+  <div class="scroll-wrap" style="margin-bottom:26px;">
+    <table id="positionsTable"><thead></thead><tbody></tbody></table>
+  </div>
+
+  <h2>4. Aspectos (ordenados por impacto)</h2>
+  <div class="filters">
+    <div class="f">
+      <label>Planeta em trânsito</label>
+      <select id="fPlanet"><option value="">Todos</option></select>
+    </div>
+    <div class="f">
+      <label>Signo</label>
+      <select id="fSign"><option value="">Todos</option></select>
+    </div>
+    <div class="f">
+      <label>Casa natal</label>
+      <select id="fHouse"><option value="">Todas</option></select>
+    </div>
+    <div class="f">
+      <label>Tipo de aspecto</label>
+      <select id="fAspect"><option value="">Todos</option></select>
+    </div>
+    <div class="f">
+      <label>Ponto natal</label>
+      <select id="fNatal"><option value="">Todos</option></select>
+    </div>
+    <div class="f" style="min-width:120px; flex:0.6;">
+      <label>Impacto mínimo</label>
+      <input type="number" id="fImpact" min="0" max="100" step="1" value="0" placeholder="0–100">
+    </div>
+    <div class="f" style="min-width:150px; flex:0.6;">
+      <label>Máx. por seção</label>
+      <input type="number" id="fLimit" min="1" step="1" placeholder="todos">
+    </div>
+    <div class="f zero-toggle">
+      <label class="chk" title="Aspectos cujo orbe passou do teto específico do tipo de astro (Quíron/Lilith/Nodo/Vértice/Fortuna/Espírito/transpessoais) — considerados irrelevantes, peso zerado.">
+        <input type="checkbox" id="fShowZeroed" onchange="renderAspectsTable()"> Mostrar zerados
+      </label>
+    </div>
+  </div>
+
+  <div class="resultsbar">
+    <span class="count" id="resultCount"></span>
+    <div class="toolbar">
+      <button class="btn secondary small" onclick="copyForAI('all', this)">Copiar tudo para IA</button>
+      <button class="btn secondary small" onclick="exportResultsJson()">Exportar JSON</button>
+      <button class="btn secondary small" onclick="exportResultsCsv()">Exportar CSV</button>
+    </div>
+  </div>
+
+  <div id="backgroundBlock" style="display:none">
+    <h3 class="subhead">Pano de fundo <span class="hint">— trânsitos lentos já em curso, que atravessam todo o período calculado</span></h3>
+    <div class="scroll-wrap" style="margin-bottom:10px;">
+      <table id="backgroundTable"><thead></thead><tbody></tbody></table>
+    </div>
+    <div class="resultsbar" style="margin-bottom:26px;">
+      <span></span>
+      <div class="toolbar">
+        <button class="btn secondary small" onclick="copyForAI('background', this)">Copiar pano de fundo</button>
+      </div>
+    </div>
+  </div>
+
+  <h3 class="subhead period" id="periodHeading" style="display:none;">Eventos do período</h3>
+  <div class="scroll-wrap" style="margin-bottom:10px;">
+    <table id="aspectsTable"><thead></thead><tbody></tbody></table>
+  </div>
+  <div class="resultsbar" id="periodCopyBar" style="display:none;">
+    <span></span>
+    <div class="toolbar">
+      <button class="btn secondary small" onclick="copyForAI('period', this)">Copiar eventos do período</button>
+    </div>
+  </div>
+  <div class="copybox" id="copyBox"></div>
+  <textarea id="copyArea"></textarea>
+</div>
+
+</div>
+<!-- ===================== fim viewTransitos ===================== -->
+
+<!-- ===================== SINASTRIA ===================== -->
+<div id="viewDuplos" style="display:none">
+
+<!-- ===================== TRÂNSITOS DUPLOS ===================== -->
+<div class="panel">
+  <h2>Trânsitos duplos</h2>
+  <div class="hint" style="margin-bottom:10px;">Um trânsito duplo é quando o mesmo planeta em trânsito forma aspecto com um ponto de A <strong>e</strong> com um ponto de B ao mesmo tempo — diferente de um trânsito sobre o mapa composto, aqui o "gatilho" é o mesmo planeta tocando os dois mapas originais simultaneamente, o que costuma ser lido como um evento que ativa a relação como um todo.</div>
+  <div id="dtPeopleSummary" style="margin-bottom:14px;"></div>
+  <div class="mode-toggle">
+    <div class="mode-btn active" id="dtModeSingleBtn" onclick="dtSetMode('single')">Momento exato</div>
+    <div class="mode-btn" id="dtModeRangeBtn" onclick="dtSetMode('range')">Intervalo / ano</div>
+  </div>
+
+  <div id="dtSingleFields">
+    <div class="row3">
+      <div><label>Data</label><input type="date" id="dtSingleDate"></div>
+      <div><label>Hora</label><input type="time" id="dtSingleTime"><div class="hint">Padrão: 12:00</div></div>
+      <div><label>Fuso (UTC)</label><input type="number" id="dtSingleTz" step="0.5" placeholder="ex: -3"></div>
+    </div>
+    <button class="btn secondary small" style="margin-top:10px;" onclick="dtFillNow()">Preencher com agora</button>
+  </div>
+
+  <div id="dtRangeFields" style="display:none">
+    <div class="row3">
+      <div><label>Data inicial</label><input type="date" id="dtRangeStart" oninput="dtUpdateRangeWarn()"></div>
+      <div><label>Data final</label><input type="date" id="dtRangeEnd" oninput="dtUpdateRangeWarn()"></div>
+      <div><label>Passo (dias)</label><input type="number" id="dtRangeStep" value="1" min="1" max="30" oninput="dtUpdateRangeWarn()"></div>
+    </div>
+    <div class="hint" id="dtRangeWarn" style="margin-top:6px;"></div>
+    <div class="hint" style="margin:8px 0 4px;">Atalhos de período (a partir de hoje):</div>
+    <div class="preset-row">
+      <button type="button" class="btn secondary small" onclick="dtFillPreset('hoje')">Hoje</button>
+      <button type="button" class="btn secondary small" onclick="dtFillPreset('semana')">Esta semana</button>
+      <button type="button" class="btn secondary small" onclick="dtFillPreset('mes')">Este mês</button>
+      <button type="button" class="btn secondary small" onclick="dtFillPreset('semestre')">Este semestre</button>
+      <button type="button" class="btn secondary small" onclick="dtFillPreset('ano')">Este ano</button>
+    </div>
+  </div>
+
+  <button class="btn" id="dtCalcBtn" onclick="calcDoubleTransits()">Calcular trânsitos duplos</button>
+  <div id="dtStatus" class="hint" style="margin-top:8px;"></div>
+</div>
+
+<div class="panel" id="dtResultsPanel" style="display:none;">
+  <h2>Aspectos duplos (ordenados por impacto)</h2>
+  <div class="filters">
+    <div class="f">
+      <label>Planeta em trânsito</label>
+      <select id="dtFPlanet"><option value="">Todos</option></select>
+    </div>
+    <div class="f">
+      <label>Ponto de A</label>
+      <select id="dtFA"><option value="">Todos</option></select>
+    </div>
+    <div class="f">
+      <label>Ponto de B</label>
+      <select id="dtFB"><option value="">Todos</option></select>
+    </div>
+    <div class="f" style="min-width:120px; flex:0.6;">
+      <label>Impacto mínimo</label>
+      <input type="number" id="dtFImpact" min="0" max="100" step="1" value="0" placeholder="0–100">
+    </div>
+    <div class="f zero-toggle">
+      <label class="chk" title="Aspectos individuais (dentro de Toca A / Toca B) cujo orbe passou do teto específico do tipo de astro — considerados irrelevantes, peso zerado.">
+        <input type="checkbox" id="dtShowZeroed" onchange="renderDoubleTable()"> Mostrar zerados
+      </label>
+    </div>
+  </div>
+  <div class="resultsbar">
+    <span class="count" id="dtResultCount"></span>
+    <div class="toolbar">
+      <button class="btn secondary small" onclick="copyDoubleForAI(this)">Copiar para IA</button>
+      <button class="btn secondary small" onclick="exportDoubleJson()">Exportar JSON</button>
+      <button class="btn secondary small" onclick="exportDoubleCsv()">Exportar CSV</button>
+    </div>
+  </div>
+  <div class="scroll-hint">↔ arraste para os lados para ver todas as colunas.</div>
+  <div class="scroll-wrap" style="margin-bottom:10px;">
+    <table id="dtAspectsTable"><thead></thead><tbody></tbody></table>
+  </div>
+  <div class="copybox" id="dtCopyBox"></div>
+  <textarea id="dtCopyArea" style="position:absolute; left:-9999px;"></textarea>
+</div>
+
+</div>
+<!-- ===================== fim viewDuplos ===================== -->
+
+<!-- ===================== TRÂNSITOS SOBRE O COMPOSTO ===================== -->
+<div id="viewComposto" style="display:none">
+
+<div class="panel">
+  <h2>Trânsitos sobre o composto</h2>
+  <div class="hint" style="margin-bottom:10px;">Trânsitos sobre o mapa composto (ponto médio circular entre A e B) mostram as fases da relação como um "organismo" próprio — crescimento, crise, consolidação — diferente dos trânsitos duplos, que olham o mesmo planeta tocando os dois mapas originais separadamente.</div>
+  <div id="coPeopleSummary" style="margin-bottom:10px;"></div>
+  <div class="row">
+    <div>
+      <label>Sistema de casas do composto</label>
+      <select id="coHouseSystem" onchange="coRecomputeFromStorage()">
+        <option value="whole">Signos Inteiros</option>
+        <option value="equal">Casas Iguais</option>
+      </select>
+    </div>
+    <div></div>
+  </div>
+  <div class="mode-toggle">
+    <div class="mode-btn active" id="coModeSingleBtn" onclick="coSetMode('single')">Momento exato</div>
+    <div class="mode-btn" id="coModeRangeBtn" onclick="coSetMode('range')">Intervalo / ano</div>
+  </div>
+
+  <div id="coSingleFields">
+    <div class="row3">
+      <div><label>Data</label><input type="date" id="coSingleDate"></div>
+      <div><label>Hora</label><input type="time" id="coSingleTime"><div class="hint">Padrão: 12:00</div></div>
+      <div><label>Fuso (UTC)</label><input type="number" id="coSingleTz" step="0.5" placeholder="ex: -3"></div>
+    </div>
+    <button class="btn secondary small" style="margin-top:10px;" onclick="coFillNow()">Preencher com agora</button>
+  </div>
+
+  <div id="coRangeFields" style="display:none">
+    <div class="row3">
+      <div><label>Data inicial</label><input type="date" id="coRangeStart" oninput="coUpdateRangeWarn()"></div>
+      <div><label>Data final</label><input type="date" id="coRangeEnd" oninput="coUpdateRangeWarn()"></div>
+      <div><label>Passo (dias)</label><input type="number" id="coRangeStep" value="1" min="1" max="10" oninput="coUpdateRangeWarn()"></div>
+    </div>
+    <div class="hint" style="margin:8px 0 4px;">Atalhos de período (a partir de hoje):</div>
+    <div class="preset-row">
+      <button type="button" class="btn secondary small" onclick="coFillPreset('hoje')">Hoje</button>
+      <button type="button" class="btn secondary small" onclick="coFillPreset('semana')">Esta semana</button>
+      <button type="button" class="btn secondary small" onclick="coFillPreset('mes')">Este mês</button>
+      <button type="button" class="btn secondary small" onclick="coFillPreset('semestre')">Este semestre</button>
+      <button type="button" class="btn secondary small" onclick="coFillPreset('ano')">Este ano</button>
+    </div>
+    <div class="hint" id="coRangeWarn" style="margin-top:6px;"></div>
+  </div>
+
+  <button class="btn" id="coCalcTransitsBtn" onclick="calcCompositeTransits()">Calcular trânsitos sobre o composto</button>
+  <div id="coTransitStatus" class="hint" style="margin-top:8px;"></div>
+</div>
+
+<div class="panel" id="coResultsPanel" style="display:none;">
+  <h2>Posições em trânsito (sobre o composto)</h2>
+  <div class="scroll-wrap" style="margin-bottom:26px;">
+    <table id="coPositionsTable"><thead></thead><tbody></tbody></table>
+  </div>
+
+  <h2>Aspectos (ordenados por impacto)</h2>
+  <div class="filters">
+    <div class="f">
+      <label>Planeta em trânsito</label>
+      <select id="coFPlanet"><option value="">Todos</option></select>
+    </div>
+    <div class="f">
+      <label>Signo</label>
+      <select id="coFSign"><option value="">Todos</option></select>
+    </div>
+    <div class="f">
+      <label>Casa do composto</label>
+      <select id="coFHouse"><option value="">Todas</option></select>
+    </div>
+    <div class="f">
+      <label>Tipo de aspecto</label>
+      <select id="coFAspect"><option value="">Todos</option></select>
+    </div>
+    <div class="f">
+      <label>Ponto do composto</label>
+      <select id="coFNatal"><option value="">Todos</option></select>
+    </div>
+    <div class="f" style="min-width:120px; flex:0.6;">
+      <label>Impacto mínimo</label>
+      <input type="number" id="coFImpact" min="0" max="100" step="1" value="0" placeholder="0–100">
+    </div>
+    <div class="f" style="min-width:150px; flex:0.6;">
+      <label>Máx. por seção</label>
+      <input type="number" id="coFLimit" min="1" step="1" placeholder="todos">
+    </div>
+    <div class="f zero-toggle">
+      <label class="chk" title="Aspectos cujo orbe passou do teto específico do tipo de astro (Quíron/Lilith/Nodo/Vértice/Fortuna/Espírito/transpessoais) — considerados irrelevantes, peso zerado.">
+        <input type="checkbox" id="coShowZeroed" onchange="renderCompositeAspectsTable()"> Mostrar zerados
+      </label>
+    </div>
+  </div>
+
+  <div class="resultsbar">
+    <span class="count" id="coResultCount"></span>
+    <div class="toolbar">
+      <button class="btn secondary small" onclick="copyCompositeForAI('all', this)">Copiar tudo para IA</button>
+      <button class="btn secondary small" onclick="exportCompositeJson()">Exportar JSON</button>
+      <button class="btn secondary small" onclick="exportCompositeCsv()">Exportar CSV</button>
+    </div>
+  </div>
+
+  <div id="coBackgroundBlock" style="display:none">
+    <h3 class="subhead">Pano de fundo <span class="hint">— trânsitos lentos já em curso, que atravessam todo o período calculado</span></h3>
+    <div class="scroll-wrap" style="margin-bottom:10px;">
+      <table id="coBackgroundTable"><thead></thead><tbody></tbody></table>
+    </div>
+    <div class="resultsbar" style="margin-bottom:26px;">
+      <span></span>
+      <div class="toolbar">
+        <button class="btn secondary small" onclick="copyCompositeForAI('background', this)">Copiar pano de fundo</button>
+      </div>
+    </div>
+  </div>
+
+  <h3 class="subhead period" id="coPeriodHeading" style="display:none;">Eventos do período</h3>
+  <div class="scroll-wrap" style="margin-bottom:10px;">
+    <table id="coAspectsTable"><thead></thead><tbody></tbody></table>
+  </div>
+  <div class="resultsbar" id="coPeriodCopyBar" style="display:none;">
+    <span></span>
+    <div class="toolbar">
+      <button class="btn secondary small" onclick="copyCompositeForAI('period', this)">Copiar eventos do período</button>
+    </div>
+  </div>
+  <div class="copybox" id="coCopyBox"></div>
+  <textarea id="coCopyArea" style="position:absolute; left:-9999px;"></textarea>
+</div>
+
+</div>
+<!-- ===================== fim viewComposto ===================== -->
+
+<section class="cta-banner">
+  <div class="cta-banner-bg efem-cta-bg"></div>
+  <div class="cta-banner-inner">
+    <div class="cta-banner-text">
+      <h2>Interprete seu momento <span class="accent">com profundidade</span></h2>
+      <p>Uma análise personalizada transforma dados em clareza e direção para suas decisões.</p>
+      <a href="#" class="cta-banner-btn" title="Página ainda não publicada">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3.5" y="5" width="17" height="16" rx="2.4"/><path d="M3.5 9.5h17M8 3v4M16 3v4"/></svg>
+        Agendar Consulta
+      </a>
+      <div class="cta-social">
+        <div class="cta-avatars">
+          <span class="cta-avatar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="3.6"/><path d="M4.5 20c1.4-3.8 4.4-6 7.5-6s6.1 2.2 7.5 6"/></svg></span>
+          <span class="cta-avatar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="3.6"/><path d="M4.5 20c1.4-3.8 4.4-6 7.5-6s6.1 2.2 7.5 6"/></svg></span>
+          <span class="cta-avatar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="3.6"/><path d="M4.5 20c1.4-3.8 4.4-6 7.5-6s6.1 2.2 7.5 6"/></svg></span>
+          <span class="cta-avatar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="3.6"/><path d="M4.5 20c1.4-3.8 4.4-6 7.5-6s6.1 2.2 7.5 6"/></svg></span>
+          <span class="cta-avatar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="3.6"/><path d="M4.5 20c1.4-3.8 4.4-6 7.5-6s6.1 2.2 7.5 6"/></svg></span>
+        </div>
+        <div class="cta-social-text"><strong>+1.200 pessoas</strong><br>já se conheceram melhor</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<!-- Ponto de entrada da aplicação. Módulo ES — precisa ser servido via http(s)://,
+     não abre direto com file:// (ver README.md, seção "Como rodar"). -->
+
+<footer class="pm-footer">
+    <img src="assets/hamsa-outline.png" class="pm-footer-watermark" alt="">
+    <div class="pm-footer-inner">
+        <div class="pm-footer-col pm-footer-about">
+            <div class="pm-footer-brand">
+                <img src="assets/hamsa-light.png" alt="Parada Mística">
+                <span>Parada Mística</span>
+            </div>
+            <p>Astrologia, tarot e espiritualidade para iluminar decisões e promover transformações conscientes.</p>
+            <div class="pm-footer-social">
+                <a href="https://www.instagram.com/parada_mistica" target="_blank" rel="noopener" aria-label="Instagram" title="Instagram">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.2" cy="6.8" r="1.1" fill="currentColor" stroke="none"/></svg>
+                </a>
+                <a href="https://www.youtube.com/@Parada_Mistica" target="_blank" rel="noopener" aria-label="YouTube" title="YouTube">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2.5" y="5.5" width="19" height="13" rx="4"/><path d="M10.2 9.3v5.4l4.8-2.7z" fill="currentColor" stroke="none"/></svg>
+                </a>
+                <a href="https://wa.me/5511966509361" target="_blank" rel="noopener" aria-label="WhatsApp" title="WhatsApp">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M6.5 17.5 4 20l2.6-2.4A8 8 0 1 1 12 20a8 8 0 0 1-5.5-2.5Z"/><path d="M9 9.2c0-.6.5-1.2 1.1-1.2h.6c.3 0 .6.2.7.5l.6 1.6c.1.3 0 .6-.2.8l-.6.6c.5 1 1.4 1.9 2.4 2.4l.6-.6c.2-.2.5-.3.8-.2l1.6.6c.3.1.5.4.5.7v.6c0 .6-.6 1.1-1.2 1.1-3.4 0-6.9-3.5-6.9-6.9Z" fill="currentColor" stroke="none"/></svg>
+                </a>
+                <a href="mailto:paradamistica@gmail.com" aria-label="E-mail" title="E-mail">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="5" width="18" height="14" rx="3"/><path d="M4 7l8 6 8-6"/></svg>
+                </a>
+            </div>
+        </div>
+        <div class="pm-footer-col">
+            <h5>Navegação</h5>
+            <a href="index.html">Início</a>
+            <a href="#" title="Página ainda não publicada">Sobre</a>
+            <a href="#" class="ativo" title="Página ainda não publicada">Serviços</a>
+            <a href="#" title="Página ainda não publicada">Blog</a>
+            <a href="#" title="Página ainda não publicada">Contato</a>
+        </div>
+        <div class="pm-footer-col">
+            <h5>Serviços</h5>
+            <a href="tiragem-cartas.html">Tiragem de Cartas</a>
+            <a href="mapas.html">Mapas Astrais</a>
+            <a href="sinastria.html">Sinastria</a>
+            <a href="efemerides.html" class="ativo">Efemérides</a>
+        </div>
+        <div class="pm-footer-col">
+            <h5>Legal</h5>
+            <a href="#" title="Página ainda não publicada">Política de Privacidade</a>
+            <a href="#" title="Página ainda não publicada">Termos de Uso</a>
+            <a href="#" title="Página ainda não publicada">Ética e Responsabilidade</a>
+        </div>
+    </div>
+    <p class="pm-footer-copy">© 2026 Parada Mística. Todos os direitos reservados.</p>
+</footer>
+
+<script src="js/theme.js"></script>
+<script src="js/nav-dropdown.js"></script>
+<script src="js/mobile-menu.js"></script>
+<script type="module" src="efemerides/js/ui/app-efemerides.js"></script>
+</body>
+</html>

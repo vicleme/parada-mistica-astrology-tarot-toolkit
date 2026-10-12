@@ -1,0 +1,62 @@
+/* Gerenciador de baralhos (js/custom-decks.js). Usa as variáveis de tema do style.css. */
+
+#btn-gerenciar-baralhos {
+    background: none;
+    border: none;
+    font-size: 1.1rem;
+    cursor: pointer;
+    padding: 0 2px;
+    line-height: 1;
+    flex-shrink: 0;
+}
+#btn-gerenciar-baralhos:hover { transform: scale(1.2); }
+
+.dm-box {
+    max-width: 640px;
+    max-height: 90vh;
+    overflow-y: auto;
+    text-align: left;
+}
+.dm-box h4 { margin: 18px 0 6px; color: var(--text-heading); font-size: 1rem; }
+.dm-aviso  { color: var(--text-muted); }
+
+.dm-lista { list-style: none; margin: 0 0 6px; padding: 0; max-height: 260px; overflow-y: auto; }
+.dm-item { padding: 8px 4px; border-bottom: 1px solid var(--border-soft); }
+.dm-linha { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.dm-cred { display: flex; flex-direction: column; gap: 6px; margin-top: 8px; }
+.dm-cred[hidden], .dm-novo-sistema[hidden] { display: none; }
+.dm-cred input, .dm-novo-sistema input, .dm-novo-sistema select {
+    width: 100%; box-sizing: border-box; padding: 7px 10px;
+    background: var(--bg-input); color: var(--text-primary);
+    border: 1px solid var(--border-soft); border-radius: 8px; font: inherit;
+}
+.dm-cred button { align-self: flex-start; }
+.dm-novo-sistema { display: flex; flex-direction: column; gap: 6px; }
+.dm-form h4 { margin: 14px 0 0; }
+.dm-item.dm-oculto { opacity: 0.55; }
+.dm-info { display: flex; flex-direction: column; min-width: 0; }
+.dm-info strong { color: var(--text-primary); overflow-wrap: anywhere; }
+.dm-meta { font-size: 0.8rem; color: var(--text-muted); }
+.dm-acoes { display: flex; gap: 6px; flex-shrink: 0; }
+.dm-acoes button { padding: 5px 10px; font-size: 0.82rem; }
+button.dm-perigo { color: #c0392b; border-color: #c0392b; }
+
+.dm-criar { margin-top: 14px; }
+.dm-criar summary { cursor: pointer; color: var(--accent); font-weight: 600; margin-bottom: 8px; }
+.dm-form { display: flex; flex-direction: column; gap: 6px; }
+.dm-form label { font-size: 0.85rem; color: var(--text-label); margin-top: 6px; }
+.dm-form input[type="text"], .dm-form select, .dm-form textarea {
+    width: 100%; box-sizing: border-box; padding: 8px 10px;
+    background: var(--bg-input); color: var(--text-primary);
+    border: 1px solid var(--border-soft); border-radius: 8px; font: inherit;
+}
+.dm-form button[type="submit"] { align-self: flex-start; margin-top: 10px; }
+
+.dm-status { min-height: 1.3em; margin: 12px 0 4px; font-size: 0.88rem; }
+.dm-status.dm-ok   { color: #2e7d4f; }
+.dm-status.dm-erro { color: #c0392b; }
+.dm-status.dm-info { color: var(--text-muted); }
+
+@media (max-width: 520px) {
+    .dm-linha { flex-direction: column; align-items: flex-start; }
+}

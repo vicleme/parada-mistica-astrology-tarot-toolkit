@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Parada Mística - Astrologia, Tarot e Espiritualidade</title>
+    <link rel="icon" href="assets/logo.png">
+    <link rel="stylesheet" href="style.css">
+    <meta name="description" content="Astrologia, tarot e espiritualidade para iluminar decisões, compreender ciclos e transformar momentos em evolução.">
+
+    <!-- Open Graph / Facebook, WhatsApp, etc. -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://paradamistica.netlify.app/">
+    <meta property="og:title" content="Parada Mística - Astrologia, Tarot e Espiritualidade">
+    <meta property="og:description" content="Astrologia, tarot e espiritualidade para iluminar decisões, compreender ciclos e transformar momentos em evolução.">
+    <meta property="og:image" content="https://paradamistica.netlify.app/assets/og-image.jpg">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:locale" content="pt_BR">
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:url" content="https://paradamistica.netlify.app/">
+    <meta name="twitter:title" content="Parada Mística - Astrologia, Tarot e Espiritualidade">
+    <meta name="twitter:description" content="Astrologia, tarot e espiritualidade para iluminar decisões, compreender ciclos e transformar momentos em evolução.">
+    <meta name="twitter:image" content="https://paradamistica.netlify.app/assets/og-image.jpg">
+    <script>
+        // Aplica tema antes do render para evitar flash
+        (function(){
+            const t = localStorage.getItem("cartarium_tema") || "sistema";
+            if (t === "escuro" || (t === "sistema" && window.matchMedia("(prefers-color-scheme: dark)").matches)) {
+                document.documentElement.setAttribute("data-tema", "escuro");
+            }
+        })();
+    </script>
+</head>
+
+<body class="home-body">
+
+<header class="pm-header">
+    <div class="pm-header-inner">
+        <a href="index.html" class="pm-brand">
+            <img src="assets/hamsa-light.png" alt="Parada Mística">
+            <span>Parada Mística</span>
+        </a>
+        <nav class="pm-nav" id="pm-nav-principal">
+            <a href="index.html" class="ativo">Início</a>
+            <a href="#" title="Página ainda não publicada">Sobre</a>
+            <div class="pm-nav-dropdown">
+                <a href="#" class="pm-nav-dropdown-trigger">Serviços ▾</a>
+                <div class="pm-nav-dropdown-menu">
+                    <a href="tiragem-cartas.html">Tiragem de Cartas</a>
+                    <a href="mapas.html">Mapas Astrais</a>
+                    <a href="sinastria.html">Sinastria</a>
+                    <a href="efemerides.html">Efemérides</a>
+                </div>
+            </div>
+            <a href="#" title="Página ainda não publicada">Blog</a>
+            <a href="#" title="Página ainda não publicada">Contato</a>
+        </nav>
+        <div class="pm-header-actions">
+            <button id="btn-tema" class="pm-btn-tema" onclick="ciclaTema()" title="Alternar tema">🌙</button>
+            <a href="#" class="pm-btn-agendar" title="Página ainda não publicada">Agendar Consulta</a>
+            <a href="#" class="pm-avatar" title="Página ainda não publicada"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="3.6"/><path d="M4.5 20c1.4-3.8 4.4-6 7.5-6s6.1 2.2 7.5 6"/></svg></a>
+            <button id="btn-menu-mobile" class="pm-hamburger" aria-label="Abrir menu" aria-expanded="false" aria-controls="pm-nav-principal">
+                <span class="pm-hamburger-bars"><span></span><span></span><span></span></span>
+            </button>
+        </div>
+    </div>
+</header>
+
+<!-- ══════════════════════════════════════════════════════════
+     HERO
+═══════════════════════════════════════════════════════════════ -->
+<section class="home-hero">
+    <div class="home-hero-inner">
+        <h1 class="home-hero-title">
+            Autoconhecimento<br>
+            é o melhor caminho<br>
+            para <span>a sua jornada.</span>
+        </h1>
+        <p class="home-hero-sub">Astrologia, tarot e espiritualidade para iluminar decisões, compreender ciclos e transformar momentos em evolução.</p>
+        <div class="home-hero-ctas">
+            <a href="#servicos" class="btn-cta-primary">Conheça os serviços <span>→</span></a>
+            <a href="#sobre" class="btn-cta-secondary">Como funciona <span>▶</span></a>
+        </div>
+    </div>
+
+    <div class="home-badges">
+        <div class="home-badge">
+            <span class="home-badge-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20.2s-7.6-4.6-10-9.4C.4 7.4 2.4 4 6 4c2.1 0 3.7 1.1 4.6 2.6l1.4 2.2 1.4-2.2C14.3 5.1 15.9 4 18 4c3.6 0 5.6 3.4 4 6.8-2.4 4.8-10 9.4-10 9.4z"/></svg>
+            </span>
+            <span>Acolhimento sem julgamentos</span>
+        </div>
+        <div class="home-badge">
+            <span class="home-badge-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5Z"/><path d="M17 3.5l.6 1.4 1.4.6-1.4.6-.6 1.4-.6-1.4-1.4-.6 1.4-.6z" fill="currentColor" stroke="none"/></svg>
+            </span>
+            <span>Ferramentas simbólicas e profundas</span>
+        </div>
+        <div class="home-badge">
+            <span class="home-badge-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="5" cy="18" r="1.3" fill="currentColor" stroke="none"/><circle cx="11" cy="8" r="1.3" fill="currentColor" stroke="none"/><circle cx="18" cy="5" r="1.3" fill="currentColor" stroke="none"/><circle cx="19" cy="14" r="1.3" fill="currentColor" stroke="none"/><path d="M5 18 11 8l7-3 1 9"/></svg>
+            </span>
+            <span>Orientação para momentos reais</span>
+        </div>
+        <div class="home-badge">
+            <span class="home-badge-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4 12H2M22 12h-2M5 5l1.4 1.4M17.6 17.6 19 19M19 5l-1.4 1.4M6.4 17.6 5 19"/></svg>
+            </span>
+            <span>Respeito à sua jornada única</span>
+        </div>
+    </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════════
+     SERVIÇOS
+═══════════════════════════════════════════════════════════════ -->
+<section class="home-services" id="servicos">
+    <div class="home-section-head">
+        <span class="home-eyebrow">✦ O que você procura? ✦</span>
+        <h2>Nossos caminhos para<br>clareza e propósito</h2>
+    </div>
+
+    <div class="service-grid">
+        <a href="tiragem-cartas.html" class="service-card service-card-tarot">
+            <span class="service-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="4" y="3" width="9" height="14" rx="1.5" transform="rotate(-8 4 3)"/><rect x="9" y="4" width="9" height="14" rx="1.5"/></svg>
+            </span>
+            <div class="service-card-body">
+                <h3>Tiragem de Cartas</h3>
+                <p>Leituras intuitivas para respostas, orientações e compreensão do momento que você vive.</p>
+                <span class="service-link">Conhecer serviço <span>→</span></span>
+            </div>
+        </a>
+
+        <a href="efemerides.html" class="service-card service-card-efemerides">
+            <span class="service-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4.5"/><path d="M12 3v18M3 12h18"/></svg>
+            </span>
+            <div class="service-card-body">
+                <h3>Cálculo de Efemérides</h3>
+                <p>Dados astronômicos precisos para astrologia, estudos e análises personalizadas.</p>
+                <span class="service-link">Conhecer serviço <span>→</span></span>
+            </div>
+        </a>
+
+        <a href="sinastria.html" class="service-card service-card-sinastria">
+            <span class="service-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 20s-7-4.4-7-9.5A4.5 4.5 0 0 1 12 7a4.5 4.5 0 0 1 7 3.5C19 15.6 12 20 12 20Z"/></svg>
+            </span>
+            <div class="service-card-body">
+                <h3>Sinastria</h3>
+                <p>Análise profunda de relações para entender dinâmicas, compatibilidades e aprendizados.</p>
+                <span class="service-link">Conhecer serviço <span>→</span></span>
+            </div>
+        </a>
+    </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════════
+     SOBRE
+═══════════════════════════════════════════════════════════════ -->
+<section class="home-about" id="sobre">
+    <div class="home-about-inner">
+        <div class="home-about-visual">
+            <div class="home-about-arch"></div>
+        </div>
+        <div class="home-about-content">
+            <span class="home-eyebrow">✦ Sobre a Parada Mística ✦</span>
+            <h2>Astrologia é linguagem,<br>consciência é escolha.</h2>
+            <p>Aqui, o céu encontra o simbólico para te ajudar a compreender padrões, transformar percepções e avançar com mais confiança.</p>
+            <ul class="home-about-list">
+                <li>Atendimento ético e responsável</li>
+                <li>Ferramentas sérias e aprofundadas</li>
+                <li>Orientação prática para a vida real</li>
+            </ul>
+            <a href="#" class="btn-cta-primary" title="Página ainda não publicada">Sobre mim <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="3.6"/><path d="M4.5 20c1.4-3.8 4.4-6 7.5-6s6.1 2.2 7.5 6"/></svg></span></a>
+        </div>
+    </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════════
+     DEPOIMENTOS
+═══════════════════════════════════════════════════════════════ -->
+<section class="home-testimonials">
+    <div class="home-section-head">
+        <span class="home-eyebrow">✦ O que dizem ✦</span>
+        <h2>Palavras que inspiram</h2>
+    </div>
+
+    <div class="testimonial-grid">
+        <div class="testimonial-card">
+            <span class="testimonial-quote">“</span>
+            <p>As cartas trouxeram clareza para um momento que eu estava muito confusa. A leitura foi profunda e muito acolhedora.</p>
+            <div class="testimonial-author">
+                <span class="testimonial-avatar" style="background:linear-gradient(135deg,#5C8EDC,#3644BB)">J</span>
+                <div>
+                    <strong>Juliana R.</strong>
+                    <small>Tiragem de Cartas</small>
+                </div>
+            </div>
+        </div>
+        <div class="testimonial-card">
+            <span class="testimonial-quote">“</span>
+            <p>Precisava de dados precisos para meu estudo astrológico e o cálculo de efemérides foi impecável. Excelente atendimento!</p>
+            <div class="testimonial-author">
+                <span class="testimonial-avatar" style="background:linear-gradient(135deg,#79B1E7,#3B5C8E)">L</span>
+                <div>
+                    <strong>Lucas M.</strong>
+                    <small>Cálculo de Efemérides</small>
+                </div>
+            </div>
+        </div>
+        <div class="testimonial-card">
+            <span class="testimonial-quote">“</span>
+            <p>A sinastria nos ajudou a entender nossa relação de uma forma que nenhuma conversa tinha conseguido fazer antes.</p>
+            <div class="testimonial-author">
+                <span class="testimonial-avatar" style="background:linear-gradient(135deg,#332D5A,#3644BB)">M&amp;C</span>
+                <div>
+                    <strong>Marina &amp; Caio</strong>
+                    <small>Sinastria</small>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="testimonial-dots">
+        <span class="ativo"></span><span></span><span></span>
+    </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════════
+     NEWSLETTER
+═══════════════════════════════════════════════════════════════ -->
+<section class="home-newsletter-wrap">
+    <div class="home-newsletter">
+        <span class="home-newsletter-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="5" width="18" height="14" rx="3"/><path d="M4 7l8 6 8-6"/></svg>
+        </span>
+        <div class="home-newsletter-text">
+            <h3>Receba conteúdos e insights para sua jornada</h3>
+            <p>Reflexões, ciclos astrológicos e novidades da Parada Mística.</p>
+        </div>
+        <form class="home-newsletter-form" id="form-newsletter" onsubmit="return inscreverNewsletter(event)">
+            <input type="email" required placeholder="Seu melhor e-mail" id="input-newsletter">
+            <button type="submit">Quero receber <span>→</span></button>
+        </form>
+    </div>
+    <p class="home-newsletter-msg" id="msg-newsletter"></p>
+</section>
+
+<!-- ══════════════════════════════════════════════════════════
+     RODAPÉ
+═══════════════════════════════════════════════════════════════ -->
+<footer class="pm-footer">
+    <img src="assets/hamsa-outline.png" class="pm-footer-watermark" alt="">
+    <div class="pm-footer-inner">
+        <div class="pm-footer-col pm-footer-about">
+            <div class="pm-footer-brand">
+                <img src="assets/hamsa-light.png" alt="Parada Mística">
+                <span>Parada Mística</span>
+            </div>
+            <p>Astrologia, tarot e espiritualidade para iluminar decisões e promover transformações conscientes.</p>
+            <div class="pm-footer-social">
+                <a href="https://www.instagram.com/parada_mistica" target="_blank" rel="noopener" aria-label="Instagram" title="Instagram">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.2" cy="6.8" r="1.1" fill="currentColor" stroke="none"/></svg>
+                </a>
+                <a href="https://www.youtube.com/@Parada_Mistica" target="_blank" rel="noopener" aria-label="YouTube" title="YouTube">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2.5" y="5.5" width="19" height="13" rx="4"/><path d="M10.2 9.3v5.4l4.8-2.7z" fill="currentColor" stroke="none"/></svg>
+                </a>
+                <a href="https://wa.me/5511966509361" target="_blank" rel="noopener" aria-label="WhatsApp" title="WhatsApp">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M6.5 17.5 4 20l2.6-2.4A8 8 0 1 1 12 20a8 8 0 0 1-5.5-2.5Z"/><path d="M9 9.2c0-.6.5-1.2 1.1-1.2h.6c.3 0 .6.2.7.5l.6 1.6c.1.3 0 .6-.2.8l-.6.6c.5 1 1.4 1.9 2.4 2.4l.6-.6c.2-.2.5-.3.8-.2l1.6.6c.3.1.5.4.5.7v.6c0 .6-.6 1.1-1.2 1.1-3.4 0-6.9-3.5-6.9-6.9Z" fill="currentColor" stroke="none"/></svg>
+                </a>
+                <a href="mailto:paradamistica@gmail.com" aria-label="E-mail" title="E-mail">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="5" width="18" height="14" rx="3"/><path d="M4 7l8 6 8-6"/></svg>
+                </a>
+            </div>
+        </div>
+        <div class="pm-footer-col">
+            <h5>Navegação</h5>
+            <a href="index.html" class="ativo">Início</a>
+            <a href="#" title="Página ainda não publicada">Sobre</a>
+            <a href="#" title="Página ainda não publicada">Serviços</a>
+            <a href="#" title="Página ainda não publicada">Blog</a>
+            <a href="#" title="Página ainda não publicada">Contato</a>
+        </div>
+        <div class="pm-footer-col">
+            <h5>Serviços</h5>
+            <a href="tiragem-cartas.html">Tiragem de Cartas</a>
+            <a href="mapas.html">Mapas Astrais</a>
+            <a href="sinastria.html">Sinastria</a>
+            <a href="efemerides.html">Cálculo de Efemérides</a>
+        </div>
+        <div class="pm-footer-col">
+            <h5>Legal</h5>
+            <a href="#" title="Página ainda não publicada">Política de Privacidade</a>
+            <a href="#" title="Página ainda não publicada">Termos de Uso</a>
+            <a href="#" title="Página ainda não publicada">Ética e Responsabilidade</a>
+        </div>
+    </div>
+    <p class="pm-footer-copy">© 2026 Parada Mística. Todos os direitos reservados.</p>
+</footer>
+
+<script>
+function inscreverNewsletter(ev) {
+    ev.preventDefault();
+    const input = document.getElementById('input-newsletter');
+    const msg = document.getElementById('msg-newsletter');
+    // Aviso: este formulário ainda não está conectado a um serviço de e-mail
+    // (Mailchimp, Brevo, etc.). Isso precisa ser integrado antes de publicar.
+    msg.textContent = 'Obrigado! (Este formulário ainda precisa ser conectado a um serviço de e-mail de verdade.)';
+    input.value = '';
+    return false;
+}
+</script>
+<script src="js/theme.js"></script>
+<script src="js/nav-dropdown.js"></script>
+<script src="js/mobile-menu.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,26 @@
+# Sistema operacional
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Editores
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Netlify (gerado localmente pela CLI, não versionar)
+.netlify/
+
+# Node (caso algum dia entre alguma ferramenta de build)
+node_modules/
+npm-debug.log*
+
+# Arquivos temporários / backups pessoais
+*.bak
+*.tmp
+*.zip
+
+# Exports locais do app de sinastria (dicionário e comparações).
+# Contêm nomes e interpretações de pessoas reais: nunca versionar nem publicar.
+data/

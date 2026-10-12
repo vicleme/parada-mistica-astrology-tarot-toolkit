@@ -1,0 +1,100 @@
+/* ═══════════════════════════════════════════════════════════
+   PARADA MÍSTICA — DESIGN TOKENS (fonte única)
+   Baseado no Manual de Identidade + Design System.
+
+   Este arquivo é importado por:
+     - /style.css               (raiz)
+     - /sinastria/css/styles.css
+     - /efemerides/css/styles.css
+
+   Cada CSS local pode continuar usando seus próprios nomes
+   semânticos (--gold, --ink, --azul-mistico, etc.) — a regra é
+   que o VALOR hexadecimal só existe aqui. Se a paleta mudar,
+   muda-se em um lugar só.
+
+   Nota sobre breakpoints: custom properties do CSS não podem
+   ser usadas dentro da condição de um @media (é limitação da
+   spec, não deste projeto). Por isso os breakpoints abaixo são
+   documentação de referência — cada arquivo ainda escreve o
+   valor literal no @media. Ver comentário ao final do arquivo.
+═══════════════════════════════════════════════════════════ */
+
+:root {
+    /* ── Cores institucionais ─────────────────────────────── */
+    --azul-mistico:    #3644BB;
+    --roxo-profundo:   #332D5A;
+
+    /* ── Cores atmosféricas ───────────────────────────────── */
+    --azul-astral:     #3B5C8E;
+    --azul-celestial:  #5C8EDC;
+    --azul-nebuloso:   #79B1E7;
+
+    /* ── Neutros ───────────────────────────────────────────── */
+    --branco-lunar:    #FFFFFF;
+    --offwhite-lunar:  #F4F3EE;
+    --cinza-cosmico:   #242629;
+
+    /* ── Tipografia ────────────────────────────────────────── */
+    --font-display:    'Kaushan Script', 'Brush Script MT', cursive;
+    --font-corpo:      'Montserrat', -apple-system, sans-serif;
+
+    /* Escala tipográfica — desktop (Manual, seção 2) */
+    --fs-display:  64px;
+    --fs-h1:       48px;
+    --fs-h2:       36px;
+    --fs-h3:       28px;
+    --fs-h4:       22px;
+    --fs-subtitulo:20px;
+    --fs-corpo-lg: 18px;
+    --fs-corpo:    16px;
+    --fs-pequeno:  14px;
+    --fs-micro:    12px;
+
+    /* Heróis (Nível 1 do Manual — faixa livre 48–64px, Kaushan Script).
+       A home usa o maior; páginas de serviço usam o secundário.
+       Versão mobile no bloco @media abaixo — ambos os heróis do
+       site hoje encolhem em 600px, o mesmo limiar usado aqui. */
+    --fs-hero:           3.6rem;  /* 57.6px — hero da home */
+    --fs-hero-secondary: 3.4rem;  /* 54.4px — hero de páginas de serviço */
+
+    /* ── Espaçamento (múltiplos de 4) ─────────────────────── */
+    --sp-xs: 4px;  --sp-s: 8px;   --sp-m: 16px;  --sp-l: 24px;
+    --sp-xl: 32px; --sp-2xl: 48px; --sp-3xl: 64px; --sp-4xl: 80px; --sp-5xl: 96px; --sp-6xl: 128px;
+
+    /* ── Raios ─────────────────────────────────────────────── */
+    --radius-s: 4px; --radius-m: 8px; --radius-l: 12px; --radius-xl: 20px; --radius-pill: 999px;
+}
+
+/* Escala tipográfica — mobile (Manual, seção 2).
+   Usa 600px como limiar único: é o breakpoint que já aparece
+   com mais frequência nas três folhas de estilo hoje, então
+   reaproveitá-lo aqui não introduz um valor novo no projeto. */
+@media (max-width: 600px) {
+    :root {
+        --fs-display:  44px;
+        --fs-h1:       36px;
+        --fs-h2:       30px;
+        --fs-h3:       24px;
+        --fs-h4:       20px;
+        --fs-subtitulo:18px;
+        --fs-corpo:    16px;
+        --fs-pequeno:  14px;
+        --fs-micro:    12px;
+        --fs-hero:           2.6rem;  /* 41.6px */
+        --fs-hero-secondary: 2.5rem;  /* 40px */
+    }
+}
+
+/* ── Breakpoints oficiais do Manual (referência) ──────────────
+   Mobile        < 576px
+   Tablet          576–767px
+   Tablet grande   768–991px
+   Desktop         992–1199px
+   Desktop grande  ≥ 1200px
+
+   Hoje o projeto usa ~10 valores diferentes (480/520/560/600/
+   720/760/800/860/880/900px) espalhados pelos três arquivos.
+   Migrar cada @media para um desses 4 valores é uma mudança de
+   layout, não só de token — precisa ser feita página por página
+   com checagem visual, então fica como próxima etapa deliberada
+   e não foi tocada nesta consolidação. */

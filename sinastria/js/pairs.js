@@ -2,7 +2,7 @@
  * pairs.js — Taxonomia estática do domínio: quais planetas/pares de planetas
  * caem em qual categoria (Intelectual/Emocional/Sexual/...), eixo (Estrutura/
  * Destino) ou marcador de casa. Só dados (Sets/Maps/arrays), nenhuma função de
- * cálculo. Não depende de nenhum outro módulo do projeto.
+ * cálculo. Só depende de astro/js/core/weights.js (reexporta as tabelas de peso).
  * Usado por: praticamente todos os módulos de cálculo e renderização (charts.js,
  * comparisons.js, compute.js, dictionary.js, houses.js, parser.js, report.js,
  * scoring.js).
@@ -21,7 +21,7 @@ export const HARD_PLANETS = new Set(['Mars','Saturn']);
 
 // Urano, Netuno e Plutão são transpessoais: intensos e desestabilizadores por
 // natureza. Uma conjunção com eles tende a ser ambivalente (nem fácil, nem só tensa).
-export const TRANSPERSONAL_PLANETS = new Set(['Uranus','Neptune','Pluto']);
+// (movido para astro/js/core/weights.js, reexportado no fim do arquivo)
 
 // Quíron e Lilith são, na própria simbologia que a literatura de sinastria atribui a
 // eles, pontos ambivalentes por natureza — Quíron é "ferida E cura" no mesmo símbolo,
@@ -46,7 +46,7 @@ export const AMBIVALENT_CONJUNCTION_POINTS = new Set(['Chiron','Lilith']);
 // chips narrativos (saturnCommitmentContacts, nodeDestinyContacts, chironWoundContacts,
 // lilithMagneticContacts), que agora passam a reconhecer marcadores clássicos como
 // Nodo-Mercúrio ("conversas destinadas") e Lilith-Mercúrio ("fala tabu/provocativa").
-export const CORE_PERSONAL_PLANETS = new Set(['Sun','Moon','Mercury','Venus','Mars']);
+// (movido para astro/js/core/weights.js, reexportado no fim do arquivo)
 
 // Vértice é o ponto tradicional de "encontro fatídico" em sinastria — quando ele toca um
 // pessoal do parceiro OU um dos ângulos (Ascendente/MC), é lido classicamente como sinal
@@ -449,8 +449,8 @@ export const CADENT_HOUSES = new Set([3,6,9,12]);
 // leitura "ângulo de parceria de longo prazo" (Descendente) genuinamente pode pesar
 // diferente da "reconhecimento instantâneo" (Ascendente) sem contradizer a geometria.
 // Fica num tier intermediário entre o antigo 1.20 (MC/IC) e o 1.35 do Ascendente.
-export const DSC_ASC_SYMMETRIC_ASPECTS = new Set(['Conjunction', 'Opposition', 'Square']);
-export const DSC_PERSONAL_PLANETS = new Set(['Sun', 'Moon', 'Venus', 'Mars', 'Mercury']);
+// (movido para astro/js/core/weights.js, reexportado no fim do arquivo)
+// (movido para astro/js/core/weights.js, reexportado no fim do arquivo)
 
 // Fração "harmônica" de um aspecto (0 = tenso, 1 = harmônico). Trígono/sextil
 // são sempre harmônicos e quadratura/oposição sempre tensos — mas a conjunção
@@ -492,3 +492,6 @@ export const CATEGORY_KEYS = ['sexual','pratico','emocional','intelectual','afin
 // oposição, depois de normalizadas (aspecto já trocado por normalizeAxisAspect),
 // representam sempre a leitura do lado Ascendente/MC — usam o rótulo de ponto único.
 export const SYMMETRIC_MERGED_LABEL_ASPECTS = new Set(['Square']);
+
+// Conjuntos compartilhados com o sistema de pesos (fonte única em weights.js).
+export { TRANSPERSONAL_PLANETS, CORE_PERSONAL_PLANETS, DSC_ASC_SYMMETRIC_ASPECTS, DSC_PERSONAL_PLANETS } from '../../astro/js/core/weights.js';

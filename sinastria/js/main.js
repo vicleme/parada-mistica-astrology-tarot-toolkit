@@ -511,7 +511,21 @@ document.getElementById('generateReportBtn').addEventListener('click', () => {
   // sumir conteúdo na impressão.
   area.querySelectorAll('details').forEach(d => d.open = true);
 
-  // pequeno atraso pra garantir que o browser terminou de aplicar o innerHTML antes
-  // de abrir o diálogo de impressão.
-  setTimeout(() => window.print(), 50);
+  // O relatório usa variações da fonte de título (negrito, itálico) que a tela talvez
+  // nunca tenha desenhado, então o navegador ainda não as baixou. Se imprimir antes
+  // disso, o PDF sai com a fonte de reserva do sistema em vez da fonte do site. Aqui
+  // carregamos as variações que o relatório de fato usa e só então abrimos a impressão
+  // (com um limite de tempo, pra não travar se alguma fonte não carregar).
+  const imprimir = () => setTimeout(() => window.print(), 50);
+  if (document.fonts && document.fonts.load){
+    const fontes = new Set();
+    area.querySelectorAll('.rprint-cover h1, .rprint-compare h2, .rprint-relation-title, .rprint-verdict-title, .rprint-stat .v').forEach(el => {
+      const cs = getComputedStyle(el);
+      fontes.add(`${cs.fontStyle} ${cs.fontWeight} ${cs.fontSize} ${cs.fontFamily}`);
+    });
+    const carregadas = Promise.all([...fontes].map(f => document.fonts.load(f).catch(() => null)));
+    Promise.race([carregadas, new Promise(r => setTimeout(r, 2500))]).then(imprimir, imprimir);
+  } else {
+    imprimir();
+  }
 });

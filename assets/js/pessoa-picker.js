@@ -9,7 +9,7 @@
 // próprio (injetado uma vez), usando as variáveis de tema já definidas em
 // cada folha de estilo local (--bg, --text, --line, --input-bg, --gold,
 // --rose), pra herdar claro/escuro sem depender de nenhuma classe específica
-// de efemerides/css ou sinastria/css.
+// de astro/css ou sinastria/css.
 // ============================================================================
 
 import { deletePessoa, getPessoa, listPessoas, PESSOAS_SORT_OPTIONS, savePessoa, sortPessoas } from './pessoas.js';

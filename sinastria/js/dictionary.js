@@ -9,7 +9,8 @@
 
 import { escapeHtml } from './comparisons.js';
 import { catMetaFor } from './compute.js';
-import { NODE_MIRROR_ASPECT, ORB_DECAY_DIVISOR } from './calibration.js';
+import { NODE_MIRROR_ASPECT } from './calibration.js';
+import { GENERATIONAL_DISCOUNT, orbDecay } from '../../astro/js/core/weights.js';
 import { ANGLE_AXIS_LABEL_PT, ASPECT_LABEL_PT, DICT_FLAVOR_ICON, DICT_FLAVOR_LABEL, OPPOSITE_SIGN, PLANET_LABEL_PT, SIGN_LABEL_PT } from './labels.js';
 import { CATEGORY_KEYS, DESTINY_ANCHORS, DSC_ASC_SYMMETRIC_ASPECTS, MARRIAGE_HOUSES, SYMMETRIC_MERGED_LABEL_ASPECTS, TRANSPERSONAL_PLANETS } from './pairs.js';
 import { aspectCategoryMult, effectiveMaxOrb, parseText } from './parser.js';
@@ -186,10 +187,10 @@ export function axisMirrorNote(a){
 // impacto exibido tratam esse falso sinal como equivalente a um aspecto pessoal real.
 export function aspectWeight(a){
   const orbW = a.orb <= effectiveMaxOrb(a.aspect, a.planet1, a.planet2)
-    ? Math.exp(-a.orb / (ORB_DECAY_DIVISOR[a.aspect] || 2.5))
+    ? orbDecay(a.aspect, a.orb)
     : 0;
   const bothOuter = TRANSPERSONAL_PLANETS.has(a.planet1) && TRANSPERSONAL_PLANETS.has(a.planet2);
-  const generationalDiscount = bothOuter ? 0.3 : 1.0;
+  const generationalDiscount = bothOuter ? GENERATIONAL_DISCOUNT : 1.0;
   // boost calculado uma vez e reaproveitado pro catMult (correção de auditoria #5 — ver
   // comentário em ASPECT_CATEGORY_MULT/aspectCategoryMult): precisa do mesmo `boost` que
   // computeScores já usa, pra distinguir par sem pessoal MAS com eixo curado (ex.:
@@ -310,7 +311,7 @@ export function applyDictFilter(patterns, filterValue){
   return patterns;
 }
 // Padrões com weight 0 (aspecto cujo orbe passou do teto específico do tipo de astro —
-// ver effectiveMaxOrb/ORB_TYPE_MULT) ficam escondidos por padrão, mesmo critério e mesmo
+// ver effectiveMaxOrb/ORB_TYPE_MULT em astro/js/core/orbs.js) ficam escondidos por padrão, mesmo critério e mesmo
 // rótulo do checkbox "Mostrar zerados" já usado nos 4 painéis de aspectos da Efeméride
 // Pessoal. Casa nunca zera (houseWeight não depende de orbe), então esse filtro só afeta
 // padrões kind==='aspect'.

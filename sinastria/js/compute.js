@@ -11,7 +11,8 @@
  */
 
 import { potentialScore } from './comparisons.js';
-import { CALIBRATION, HOUSE_PLANET_VALENCE, ORB_DECAY_DIVISOR } from './calibration.js';
+import { CALIBRATION, HOUSE_PLANET_VALENCE } from './calibration.js';
+import { generationalDiscount as generationalDiscountFor, orbDecay, reciprocityBoost as reciprocityBoostFor } from '../../astro/js/core/weights.js';
 import { CAT_META, EXTREME_TEXT_BY_TYPE, IMBALANCE_TEXT_BY_TYPE, PAIR_INFO_BY_TYPE, PLANET_LABEL_PT, SEXUAL_LABEL_BY_TYPE, VINCULO_CHEM_NOUN_BY_TYPE, VINCULO_MATRIX, VINCULO_TERMS_BY_TYPE } from './labels.js';
 import { CORE_PERSONAL_PLANETS, DESTINY_ANCHORS, MARRIAGE_HOUSES, TRANSPERSONAL_PLANETS, VERTEX_FATED_TARGETS } from './pairs.js';
 import { computeChironPartnershipHouse, computeCommitmentHouses, computeDestinyHouses, computeFriendshipHouses, computeHouseConvergence, computePlutoPartnershipHouse } from './houses.js';
@@ -351,7 +352,7 @@ export function computeScores(parsed, relType){
     // ele, Quíron/Lilith/Nodo/Vértice/Fortuna/transpessoais deixam de contar de vez —
     // não é só "pesar menos", é considerar que o aspecto não existe mais nesse orbe.
     const orbW = a.orb <= effectiveMaxOrb(a.aspect, a.planet1, a.planet2)
-      ? Math.exp(-a.orb / (ORB_DECAY_DIVISOR[a.aspect] || 2.5))
+      ? orbDecay(a.aspect, a.orb)
       : 0;
 
     // fração harmônica do aspecto (considera quem está em conjunção — não só o tipo
@@ -362,6 +363,10 @@ export function computeScores(parsed, relType){
     // pra também ficar disponível no bloco de categoria de conteúdo mais abaixo, que
     // agora guarda o detalhe de cada marcador pro tooltip de hover das barras.
     const markerCat = markerCategory(hFrac);
+    // versão da fração usada só dentro da categoria Atração (Marte duro com Sol/
+    // Ascendente conta como faísca ali, e como tensão no resto)
+    const hFracAttr = harmonicFraction(a.aspect, a.planet1, a.planet2, sameSign, 'attraction');
+    const markerCatAttr = markerCategory(hFracAttr);
 
     // eixos Sol-Lua, Vênus-Marte, Nodo e Ascendente/MC/IC com os pessoais pesam mais:
     // são os indicadores clássicos mais citados em sinastria (ver AXIS_BOOST acima)
@@ -439,13 +444,13 @@ export function computeScores(parsed, relType){
     // geracionais — compartilhados por qualquer par nascido na mesma época — então
     // pesam bem menos na leitura pessoal do vínculo.
     const bothOuter = TRANSPERSONAL_PLANETS.has(a.planet1) && TRANSPERSONAL_PLANETS.has(a.planet2);
-    const generationalDiscount = bothOuter ? 0.3 : 1.0;
+    const generationalDiscount = generationalDiscountFor(a.planet1, a.planet2);
 
     // reciprocidade: quando o mesmo par de planetas conecta as duas pessoas nos dois
     // sentidos (não só duplicata — dois aspectos de fato diferentes "fechando o eixo"),
     // é um reforço mútuo tradicionalmente lido como sinal mais forte que um contato único
     const planetPair = [a.planet1, a.planet2].sort().join('-');
-    const reciprocityBoost = (recipCounts.get(planetPair) || 1) >= 2 ? 1.15 : 1.0;
+    const reciprocityBoost = reciprocityBoostFor(recipCounts.get(planetPair));
 
     // Categoria de aspecto (maior/menor, com desconto composto se menor E sem pessoal
     // nenhum no par; e agora também um desconto mais leve se MAIOR, sem pessoal E sem
@@ -483,12 +488,14 @@ export function computeScores(parsed, relType){
     // lista ao passar o mouse ficavam desalinhados com o peso de fato usado no cálculo.
     if (catKeys && orbW > 0){
       for (const catKey of catKeys){
-        catPool[catKey].harmoniousW += harmContribution * hFrac;
-        catPool[catKey].tenseW      += harmContribution * (1 - hFrac);
+        const fr = catKey === 'sexual' ? hFracAttr : hFrac;
+        const mc = catKey === 'sexual' ? markerCatAttr : markerCat;
+        catPool[catKey].harmoniousW += harmContribution * fr;
+        catPool[catKey].tenseW      += harmContribution * (1 - fr);
         catPool[catKey].eligibleCount++;
-        if (markerCat === 'harmonic') catPool[catKey].harmonicDetails.push(formatMarkerDetail(a, markerCat));
-        else if (markerCat === 'ambivalent') catPool[catKey].ambivalentDetails.push(formatMarkerDetail(a, markerCat));
-        else catPool[catKey].tenseDetails.push(formatMarkerDetail(a, markerCat));
+        if (mc === 'harmonic') catPool[catKey].harmonicDetails.push(formatMarkerDetail(a, mc));
+        else if (mc === 'ambivalent') catPool[catKey].ambivalentDetails.push(formatMarkerDetail(a, mc));
+        else catPool[catKey].tenseDetails.push(formatMarkerDetail(a, mc));
       }
     }
 
@@ -533,11 +540,11 @@ export function computeScores(parsed, relType){
     // pro denominador nem pro numerador de Nitidez.
     if (!bothOuter && isSignificantForHarmony && orbW > 0){
       strengthEligibleCount++;
-      if (a.orb < 2) tightCount++;
+      if (a.orb < CALIBRATION.strengthTightOrb) tightCount++;
 
       eligibleHarmonicWeight += hFrac;
       eligibleTenseWeight    += (1 - hFrac);
-      if (a.orb < 2){
+      if (a.orb < CALIBRATION.strengthTightOrb){
         tightHarmonicWeight += hFrac;
         tightTenseWeight    += (1 - hFrac);
       }
@@ -683,13 +690,16 @@ export function computeScores(parsed, relType){
   // eixo. Retorna null se o PESO do pool (não a contagem — ver CALIBRATION.
   // minAxisSignalWeight) ficar abaixo do piso de confiança, pra não mostrar uma falsa
   // precisão em cima de sinal fraco/disperso.
-  function poolHarmonyPct(hW, tW){
+  function poolHarmonyPct(hW, tW, poolKey){
     if ((hW + tW) < CALIBRATION.minAxisSignalWeight) return null;
     const raw = hW/(hW+tW)*100;
-    return Math.round(Math.min(95, Math.max(5, 50 + (raw-50)*CALIBRATION.harmonyStretch)));
+    const stretched = Math.min(95, Math.max(5, 50 + (raw-50)*CALIBRATION.harmonyStretch));
+    const ref = CALIBRATION.shrinkRefWeight && CALIBRATION.shrinkRefWeight[poolKey];
+    const k = ref ? Math.min(1, (hW + tW) / ref) : 1;
+    return Math.round(50 + (stretched - 50) * k);
   }
-  const structureHarmonyPct = poolHarmonyPct(structureHarmoniousW, structureTenseW);
-  const destinyHarmonyPct = poolHarmonyPct(destinyHarmoniousW, destinyTenseW);
+  const structureHarmonyPct = poolHarmonyPct(structureHarmoniousW, structureTenseW, 'estrutura');
+  const destinyHarmonyPct = poolHarmonyPct(destinyHarmoniousW, destinyTenseW, 'destino');
   // Peso bruto de cada eixo (sem escala nem teto de 100 — ao contrário de `presence`
   // nas categorias abaixo) — usado só pra ponderar Estrutura/Destino/Emocional/
   // Intelectual entre si na fatia de "significância" do Veredito (ver potentialScore).
@@ -714,7 +724,7 @@ export function computeScores(parsed, relType){
   // isSignificantForHarmony), não a soma bruta — evita saturar em 100 sempre
   // (exclui aspectos outer-outer, que são geracionais e não dizem muito sobre o vínculo pessoal)
   const tightRatio = strengthEligibleCount ? (tightCount/strengthEligibleCount*100) : 0;
-  const strength = Math.min(100, Math.round(tightRatio * 2.3));
+  const strength = Math.min(100, Math.round(tightRatio * CALIBRATION.strengthTightScale));
 
   // Nitidez por lado — mesma fórmula/escala do strength geral acima, mas aplicada só
   // ao sub-pool harmônico ou só ao tenso (eligibleHarmonicWeight/tightHarmonicWeight e
@@ -724,8 +734,8 @@ export function computeScores(parsed, relType){
   // "emprestada" do lado que perdeu (ver comentário em potentialScore).
   const tightHarmonicRatio = eligibleHarmonicWeight ? (tightHarmonicWeight/eligibleHarmonicWeight*100) : 0;
   const tightTenseRatio    = eligibleTenseWeight    ? (tightTenseWeight/eligibleTenseWeight*100)       : 0;
-  const strengthHarmonic = Math.min(100, Math.round(tightHarmonicRatio * 2.3));
-  const strengthTense    = Math.min(100, Math.round(tightTenseRatio * 2.3));
+  const strengthHarmonic = Math.min(100, Math.round(tightHarmonicRatio * CALIBRATION.strengthTightScale));
+  const strengthTense    = Math.min(100, Math.round(tightTenseRatio * CALIBRATION.strengthTightScale));
 
   const { houseConvergenceContacts, houseConvergenceDetails } = computeHouseConvergence(parsed.houses);
   const { commitmentHouseContacts, commitmentHouseDetails } = computeCommitmentHouses(parsed.houses);
@@ -764,7 +774,7 @@ export function computeScores(parsed, relType){
       // satura em 100 — duas categorias no teto pesariam igual mesmo com volumes de
       // sinal bem diferentes.
       weight: hW + tW + houseW,
-      harmonyPct: poolHarmonyPct(hW, tW), // null se o peso do sub-pool de ASPECTOS for baixo demais pra confiar (casas não entram aqui)
+      harmonyPct: poolHarmonyPct(hW, tW, k), // null se o peso do sub-pool de ASPECTOS for baixo demais pra confiar (casas não entram aqui)
       // pro tooltip de hover da barra (renderCategoryVisuals): ambivalentes entram nos
       // dois lados (verde e vermelho) porque matematicamente eles PESAM nos dois
       // (harmoniousW e tenseW simultaneamente, via hFrac fracionário) — não é um "meio
@@ -982,7 +992,7 @@ export function classify({ categoryScores, harmonyPct, strength, relType, immedi
   // O texto já é genérico o bastante (usa harmonyPct dinamicamente, sem pressupor faixa)
   // pra cobrir qualquer valor sem reescrita. Restrição de faixa removida — strength
   // baixo sozinho já é o sinal real de "dado fino demais pra confiar no tema/dominância".
-  if (strength < 15){
+  if (strength < CALIBRATION.minStrengthForReading){
     return {
       title: "Conexão sutil",
       desc: `Poucos aspectos bem exatos ligam essas duas cartas — não há uma carga astrológica muito concentrada em nenhuma direção específica (harmonia em ${Math.round(harmonyPct)}%). Pode ser um vínculo mais leve ou ainda pouco explorado.`
@@ -1010,7 +1020,7 @@ export function classify({ categoryScores, harmonyPct, strength, relType, immedi
   // forte. Exigir que Sexual bata o maior individual, não só a média, evita isso: se
   // houver empate real no topo, cai no ranking normal abaixo, que já tem textos
   // dedicados pra dupla Prático+Sexual (ex.: "Presença com Chão"/"Atração com Chão").
-  if (S - Math.max(I,E,P) > 13){
+  if (S - Math.max(I,E,P) > CALIBRATION.extremeAttractionGap){
     const ext = EXTREME_TEXT_BY_TYPE[relType];
     const title = harmonic ? ext.harmonicTitle : ext.tenseTitle;
     let flavor = harmonic
@@ -1034,7 +1044,7 @@ export function classify({ categoryScores, harmonyPct, strength, relType, immedi
   // null — sem dado de favorabilidade próprio) até 1.0 (harmonyPct=0% ou 100%, o extremo
   // decisivo). O piso evita zerar categorias mistas — presence real continua pesando,
   // só não carrega o peso de uma leitura já resolvida.
-  const PROMINENCE_MIN_WEIGHT = 0.65;
+  const PROMINENCE_MIN_WEIGHT = CALIBRATION.prominenceMinWeight;
   function decisivenessWeight(hPct){
     if (hPct === null) return PROMINENCE_MIN_WEIGHT;
     const decisiveness = Math.abs(hPct - 50) / 50;

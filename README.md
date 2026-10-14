@@ -12,7 +12,7 @@ A Portuguese-language website that brings together four self-knowledge tools und
 
 - **Card readings (Cartarium).** Tarot, Lenormand, Sibilla, Kipper, oracle and rune systems; 1 to 3 decks shuffled together; free or fixed spreads; optional reversed cards; suggested questions by area (general, love, work, spiritual); single-reading and session modes; a log of questions and draws with meanings; copy and image capture.
 - **Deck manager.** Import, export, create and delete your own decks in the browser, or create a new system that reuses the spreads of an existing one. See [docs/custom-decks.md](docs/custom-decks.md).
-- **Synastry.** Calculates a relationship reading from the aspects and house overlays of two charts: markers by area (affection, practical, emotional, intellectual, affinity, passion), scores (compatibility, harmony, structure, destiny, sharpness, verdict), a comparison across many relationships, an editable meaning dictionary, and a printable PDF report.
+- **Synastry.** Calculates a relationship reading from the aspects and house overlays of two charts: markers by area (affection, practical, emotional, intellectual, affinity, passion), scores (compatibility, harmony, structure, destiny, sharpness, verdict), a comparison across many relationships, an editable meaning dictionary, and a printable PDF report. See [docs/synastry-calculation.md](docs/synastry-calculation.md) for how the scores are calculated.
 - **Charts.** Natal chart with planets, angles, lots, dignities, structural reading and a people registry; synastry and composite charts.
 - **Ephemeris and transits.** Individual and dual transits over a date range, with an aspects table ordered by impact. Results can be copied for an AI assistant or exported as Markdown, JSON or CSV.
 - **Light and dark themes**, responsive layout.
@@ -38,17 +38,17 @@ A Portuguese-language website that brings together four self-knowledge tools und
 
 | Synastry calculator | Synastry report (PDF) |
 |---|---|
-| <img alt="Synastry calculator with scores and markers by area" src="docs/screenshots/synastry-calculator-dark.webp"> | <img alt="First page of a synastry report" src="docs/screenshots/synastry-report-pdf.webp"> |
+| <picture><source media="(prefers-color-scheme: dark)" srcset="docs/screenshots/synastry-calculator-dark.webp"><img alt="Synastry calculator with scores and markers by area" src="docs/screenshots/synastry-calculator-light.webp"></picture> | <img alt="First page of a synastry report" src="docs/screenshots/synastry-report-pdf.webp"> |
 
 | Report options | Meaning dictionary |
 |---|---|
-| <img alt="Synastry report options" src="docs/screenshots/synastry-report-options-dark.webp"> | <img alt="Synastry meaning dictionary" src="docs/screenshots/synastry-dictionary-dark.webp"> |
+| <picture><source media="(prefers-color-scheme: dark)" srcset="docs/screenshots/synastry-report-options-dark.webp"><img alt="Synastry report options" src="docs/screenshots/synastry-report-options-light.webp"></picture> | <picture><source media="(prefers-color-scheme: dark)" srcset="docs/screenshots/synastry-dictionary-dark.webp"><img alt="Synastry meaning dictionary" src="docs/screenshots/synastry-dictionary-light.webp"></picture> |
 
 | Natal chart | Transits |
 |---|---|
-| <img alt="Natal chart form and table of positions" src="docs/screenshots/natal-chart-dark.webp"> | <img alt="Transits, positions and aspects table" src="docs/screenshots/ephemeris-dark.webp"> |
+| <picture><source media="(prefers-color-scheme: dark)" srcset="docs/screenshots/natal-chart-dark.webp"><img alt="Natal chart form and table of positions" src="docs/screenshots/natal-chart-light.webp"></picture> | <picture><source media="(prefers-color-scheme: dark)" srcset="docs/screenshots/ephemeris-dark.webp"><img alt="Transits, positions and aspects table" src="docs/screenshots/ephemeris-light.webp"></picture> |
 
-The images follow your GitHub theme; the site has its own light and dark toggle. Names in the examples are first names of people who agreed to appear.
+The images follow your GitHub theme (the report is a PDF, so it has a single version); the site has its own light and dark toggle. Names in the examples are first names of people who agreed to appear.
 
 </details>
 
@@ -96,7 +96,7 @@ To deploy, connect the repository to Netlify (or any static host). `netlify.toml
 ├── decks/                   Deck definitions (riderwaite.js, _template.js)
 ├── images/riderwaite/       Card images (public domain scans, 1909)
 ├── sinastria/               CSS and logic of the synastry pages
-├── efemerides/              CSS and logic of the charts and ephemeris pages
+├── astro/                   Astronomy engine and logic of the charts and ephemeris pages
 ├── docs/                    Documentation, screenshots and a sample deck
 └── scripts/                 Helper script to prepare card images
 ```

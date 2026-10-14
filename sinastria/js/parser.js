@@ -6,7 +6,9 @@
  * Usado por: comparisons.js, compute.js, dictionary.js, main.js, report.js.
  */
 
-import { ASPECT_CATEGORY_MULT, MINOR_ASPECTS, NODE_MIRROR_ASPECT, ORB_BASE_MAX, ORB_TYPE_MULT } from './calibration.js';
+import { NODE_MIRROR_ASPECT } from './calibration.js';
+import { pairKey } from '../../astro/js/core/weights.js';
+import { ASPECT_ANGLE_EN, maxOrbFor, orbTypeMultiplier } from '../../astro/js/core/orbs.js';
 import { ASPECT_WORDS, CORE_PERSONAL_PLANETS } from './pairs.js';
 import { harmonicFraction, markerCategory } from './scoring.js';
 
@@ -134,10 +136,10 @@ export function normPlanet(raw){
 
 export function orbToDeg(deg,min){ return parseInt(deg,10) + parseInt(min,10)/60; }
 
-export function orbTypeMultiplier(name){ return ORB_TYPE_MULT[name] ?? 1.0; }
+// Regra de orbe compartilhada com os mapas (astro/js/core/orbs.js).
+export { orbTypeMultiplier };
 export function effectiveMaxOrb(aspect, planet1, planet2){
-  const base = ORB_BASE_MAX[aspect] ?? 8;
-  return base * Math.min(orbTypeMultiplier(planet1), orbTypeMultiplier(planet2));
+  return maxOrbFor(ASPECT_ANGLE_EN[aspect], planet1, planet2);
 }
 // Correção de auditoria #2 (calibrado com o usuário, caso Nodo-Quíron): o catMult=0.6
 // acima resolvia a inversão de ORDEM entre maior/menor no MESMO orbe (ver comentário
@@ -186,16 +188,8 @@ export function effectiveMaxOrb(aspect, planet1, planet2){
 // estrutural que um menor, mesmo sem pessoal/eixo — não faz sentido puni-lo tanto quanto
 // um aspecto já subtil por natureza), mas suficiente pra tirar esses pares do caminho de
 // Lua-Lua/Sol-Sol em orbes comparáveis.
-export function aspectCategoryMult(aspectName, planet1, planet2, boost){
-  const personalCount = (CORE_PERSONAL_PLANETS.has(planet1) ? 1 : 0) + (CORE_PERSONAL_PLANETS.has(planet2) ? 1 : 0);
-  if (!MINOR_ASPECTS.has(aspectName)){
-    if (personalCount === 0 && boost === 1.0) return ASPECT_CATEGORY_MULT.majorNonPersonalUncurated;
-    return ASPECT_CATEGORY_MULT.major;
-  }
-  if (personalCount === 2) return ASPECT_CATEGORY_MULT.minorBothPersonal;
-  if (personalCount === 1) return ASPECT_CATEGORY_MULT.minorOnePersonal;
-  return ASPECT_CATEGORY_MULT.minorNonPersonal;
-}
+// aspectCategoryMult mora em astro/js/core/weights.js (fonte única de pesos); reexportado aqui.
+export { aspectCategoryMult } from '../../astro/js/core/weights.js';
 
 export function parseText(text){
   const lines = text.split('\n').map(l=>l.trim()).filter(Boolean);
@@ -407,7 +401,7 @@ export function dedupeAspects(aspects){
 export function reciprocityCounts(aspects){
   const counts = new Map();
   for (const a of aspects){
-    const planetPair = [a.planet1, a.planet2].sort().join('-');
+    const planetPair = pairKey(a.planet1, a.planet2);
     counts.set(planetPair, (counts.get(planetPair) || 0) + 1);
   }
   return counts;

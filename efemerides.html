@@ -6,7 +6,7 @@
 <title>Efemérides - Parada Mística</title>
 <link rel="icon" href="assets/logo.png">
 <link rel="stylesheet" href="style.css">
-<link rel="stylesheet" href="efemerides/css/styles.css">
+<link rel="stylesheet" href="astro/css/styles.css">
 <meta name="description" content="Calcule trânsitos individuais e trânsitos duplos com precisão. Descubra como os astros se movem sobre o seu mapa natal ou sobre uma relação.">
 
 <!-- Open Graph / Facebook, WhatsApp, etc. -->
@@ -105,88 +105,32 @@
   <h2>1. Mapa natal (referência)</h2>
   <label>Pessoa cadastrada</label>
   <select id="natalPessoaSelect"></select>
-  <div class="hint" style="margin-bottom:10px;">Escolha uma pessoa já cadastrada (em Mapas Astrais) pra carregar os dados dela, ou preencha um mapa avulso abaixo sem cadastrar ninguém.</div>
-  <div class="row" style="grid-template-columns:2fr 1fr;">
-    <div>
-      <label>Nome (opcional, só usado se você salvar esta pessoa no cadastro)</label>
-      <input type="text" id="natalName" placeholder="ex: Victor">
-    </div>
-    <div>
-      <label>Sigla</label>
-      <input type="text" id="natalSigla" placeholder="ex: VL" maxlength="6" style="text-transform:uppercase;">
-    </div>
-  </div>
-  <div class="hint" style="margin:4px 0 10px;">A sigla identifica esta pessoa no texto da Calculadora de Sinastria (ex: "VL's Sun..."). Se ficar em branco, usa o Nome.</div>
-  <div class="row3">
-    <div>
-      <label>Nascimento</label>
-      <input type="date" id="natalDate">
-    </div>
-    <div>
-      <label>Hora</label>
-      <input type="time" id="natalTime">
-      <div class="hint">Sem hora → assume 12:00 e desativa Ascendente/Casas.</div>
-    </div>
-    <div>
-      <label>Fuso horário (UTC)</label>
-      <input type="number" id="natalTz" step="0.5" placeholder="ex: -3">
-    </div>
-  </div>
-  <label>Buscar cidade (preenche latitude/longitude automaticamente)</label>
-  <div class="row" style="grid-template-columns:1fr auto;">
-    <input type="text" id="citySearch" placeholder="ex: Santos, SP, Brasil" onkeydown="if(event.key==='Enter'){event.preventDefault();searchCity();}">
-    <button class="btn small" style="margin-top:0;" onclick="searchCity()">Buscar</button>
-  </div>
-  <div id="cityResults"></div>
-  <div class="hint">Busca via OpenStreetMap (Nominatim). Se não houver internet ou a busca falhar, preencha lat/long manualmente abaixo.</div>
-  <div class="row">
-    <div>
-      <label>Latitude (decimal, + Norte / − Sul)</label>
-      <input type="number" id="natalLat" step="0.0001" placeholder="ex: -23.9608 (Santos)">
-    </div>
-    <div>
-      <label>Longitude (decimal, + Leste / − Oeste)</label>
-      <input type="number" id="natalLon" step="0.0001" placeholder="ex: -46.3336 (Santos)">
-    </div>
-  </div>
-  <div class="row">
-    <div>
-      <label>Sistema de casas</label>
-      <select id="houseSystem">
-        <option value="whole">Signos Inteiros</option>
-        <option value="equal">Casas Iguais</option>
-        <option value="placidus">Placidus</option>
-      </select>
-    </div>
-    <div></div>
-  </div>
-  <div class="divider"></div>
-  <div class="toolbar" style="margin-bottom:12px;">
-    <button class="btn secondary small" onclick="salvarNatalNoCadastro()">Salvar no cadastro</button>
-    <button class="btn secondary small" onclick="exportNatalInput()">Exportar dados (JSON)</button>
-    <button class="btn secondary small" onclick="toggleImportBox()">Importar dados (JSON)</button>
-    <button class="btn secondary small" onclick="clearNatalStorage()">Esquecer dados salvos</button>
-  </div>
-  <div class="hint" id="natalPessoaMsg" style="margin-bottom:12px;"></div>
-  <div class="hint" style="margin-bottom:12px;">Seus dados de nascimento ficam salvos só neste navegador (localStorage) e são recarregados automaticamente na próxima visita — nada é enviado para fora.</div>
-  <div id="importBox" style="display:none; margin-bottom:16px;">
-    <label>Colar JSON aqui</label>
-    <textarea id="importJsonText" rows="4" style="width:100%; background:var(--input-bg); border:1px solid var(--line); color:var(--text); padding:9px 10px; border-radius:6px; font-family:inherit; font-size:12.5px;" placeholder='{"data_nascimento":"1990-05-15","hora_nascimento":"14:30","fuso_horario":-3,"latitude":-23.5505,"longitude":-46.6333,"sistema_casas":"placidus"}'></textarea>
-    <div class="row" style="margin-top:8px; align-items:flex-end;">
-      <div>
-        <label>...ou selecione um arquivo .json</label>
-        <input type="file" id="importJsonFile" accept="application/json,.json">
-      </div>
-      <div>
-        <button class="btn small" onclick="importNatalInput()">Carregar dados</button>
-      </div>
-    </div>
-    <div class="hint" id="importStatus" style="margin-top:6px;"></div>
-  </div>
-  <button class="btn" onclick="calcNatal()">Calcular mapa natal</button>
+  <div class="hint" id="natalPessoaResumo" style="margin-top:8px;"></div>
+  <div class="hint" style="margin-top:6px;">Os dados de nascimento vêm do cadastro de pessoas, o mesmo usado em <a href="mapas.html#pessoas">Mapas Astrais</a> e na Sinastria. Para editar ou remover alguém, use a aba Pessoas de lá.</div>
   <div class="hint" id="natalMsg" style="margin-top:8px;"></div>
+
+  <!-- Campos que o cálculo do mapa natal (features/natal.js) lê pelo id. Ficam ocultos:
+       são preenchidos a partir da pessoa escolhida acima, não digitados aqui. -->
+  <div hidden aria-hidden="true">
+    <input type="text" id="natalName">
+    <input type="text" id="natalSigla">
+    <input type="text" id="citySearch">
+    <input type="date" id="natalDate">
+    <input type="time" id="natalTime">
+    <input type="number" id="natalTz" step="0.5">
+    <input type="number" id="natalLat" step="0.0001">
+    <input type="number" id="natalLon" step="0.0001">
+    <select id="houseSystem">
+      <option value="whole">Signos Inteiros</option>
+      <option value="equal">Casas Iguais</option>
+      <option value="placidus">Placidus</option>
+    </select>
+  </div>
   <div class="divider"></div>
-  <div id="natalOutput"><div class="empty">Preencha os dados e calcule para ver seu mapa natal aqui.</div></div>
+  <!-- O mapa natal fica recolhido por padrão (visual mais limpo); o botão abre e fecha,
+       e a escolha é lembrada neste navegador (ver app-efemerides.js). -->
+  <button type="button" class="btn secondary small" id="natalToggle" aria-expanded="false" aria-controls="natalOutput">Mostrar mapa natal</button>
+  <div id="natalOutput" hidden style="margin-top:16px;"><div class="empty">Escolha uma pessoa para ver o mapa natal aqui.</div></div>
 </div>
 
 <!-- ===================== TRÂNSITOS ===================== -->
@@ -406,7 +350,7 @@
   <h2>Trânsitos sobre o composto</h2>
   <div class="hint" style="margin-bottom:10px;">Trânsitos sobre o mapa composto (ponto médio circular entre A e B) mostram as fases da relação como um "organismo" próprio — crescimento, crise, consolidação — diferente dos trânsitos duplos, que olham o mesmo planeta tocando os dois mapas originais separadamente.</div>
   <div id="coPeopleSummary" style="margin-bottom:10px;"></div>
-  <div class="row">
+  <div class="row" style="margin-bottom:14px;">
     <div>
       <label>Sistema de casas do composto</label>
       <select id="coHouseSystem" onchange="coRecomputeFromStorage()">
@@ -614,6 +558,6 @@
 <script src="js/theme.js"></script>
 <script src="js/nav-dropdown.js"></script>
 <script src="js/mobile-menu.js"></script>
-<script type="module" src="efemerides/js/ui/app-efemerides.js"></script>
+<script type="module" src="astro/js/ui/app-efemerides.js"></script>
 </body>
 </html>

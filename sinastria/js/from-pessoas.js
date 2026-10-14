@@ -3,7 +3,7 @@
 // Ponte entre o cadastro de pessoas (assets/js/pessoas.js) e a Calculadora de
 // Sinastria (sinastria.html / main.js): a partir de duas pessoas cadastradas,
 // calcula os dois mapas usando o mesmíssimo motor de efemérides já usado em
-// Mapas Astrais (computeSynChartFromInput, em efemerides/js/features/
+// Mapas Astrais (computeSynChartFromInput, em astro/js/features/
 // synastry.js) e monta o texto no formato que o parser desta página já sabe
 // ler (buildSinastriaText) — nada da lógica de aspectos, pontuação ou parsing
 // daqui se duplica; só o cálculo de posições/casas passa a ser importado
@@ -11,7 +11,7 @@
 // antes, lado a lado.
 // ============================================================================
 
-import { computeSynChartFromInput, computeSynAspectRows, buildSinastriaText } from '../../efemerides/js/features/synastry.js';
+import { computeSynChartFromInput, computeSynAspectRows, buildSinastriaText } from '../../astro/js/features/synastry.js';
 
 // Sigla usada no texto-ponte (ex: "VL's Sun..."). Sem sigla cadastrada, cai
 // pro nome; sem nenhum dos dois (não deveria acontecer, nome é obrigatório

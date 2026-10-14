@@ -14,7 +14,7 @@ Site em português que reúne quatro ferramentas de autoconhecimento sob uma só
 
 - **Tiragem de cartas (Cartarium).** Sistemas de Tarot, Lenormand, Sibilla, Kipper, oráculos e runas; de 1 a 3 baralhos embaralhados juntos; tiragens livres ou com posições fixas; cartas invertidas opcionais; perguntas sugeridas por área (geral, amoroso, profissional, espiritual); modos Consulta Única e Sessão; registro de perguntas e tiragens com os significados; copiar e capturar imagem.
 - **Gerenciador de baralhos.** Importe, exporte, crie e exclua seus próprios baralhos no navegador, ou crie um sistema novo que reaproveita as tiragens de um existente. Veja [docs/custom-decks.md](docs/custom-decks.md) (em inglês).
-- **Sinastria.** Calcula uma leitura da relação a partir dos aspectos e das sobreposições de casas de dois mapas: marcadores por área (afeição, prático, emocional, intelectual, afinidade, paixão), notas (compatibilidade, harmonia, estrutura, destino, nitidez, veredito), comparação entre várias relações, dicionário de significados editável e relatório em PDF para imprimir.
+- **Sinastria.** Calcula uma leitura da relação a partir dos aspectos e das sobreposições de casas de dois mapas: marcadores por área (afeição, prático, emocional, intelectual, afinidade, paixão), notas (compatibilidade, harmonia, estrutura, destino, nitidez, veredito), comparação entre várias relações, dicionário de significados editável e relatório em PDF para imprimir. Veja [docs/synastry-calculation.pt-BR.md](docs/synastry-calculation.pt-BR.md) para saber como as notas são calculadas.
 - **Mapas.** Mapa natal com planetas, ângulos, partes, dignidades, leitura estrutural e cadastro de pessoas; sinastria e mapa composto.
 - **Efemérides e trânsitos.** Trânsitos individuais e duplos em um período, com tabela de aspectos ordenada por impacto. Os resultados podem ser copiados para uma IA ou exportados em Markdown, JSON ou CSV.
 - **Temas claro e escuro** e layout responsivo.
@@ -40,17 +40,17 @@ Site em português que reúne quatro ferramentas de autoconhecimento sob uma só
 
 | Calculadora de sinastria | Relatório de sinastria (PDF) |
 |---|---|
-| <img alt="Calculadora de sinastria com notas e marcadores por área" src="docs/screenshots/synastry-calculator-dark.webp"> | <img alt="Primeira página de um relatório de sinastria" src="docs/screenshots/synastry-report-pdf.webp"> |
+| <picture><source media="(prefers-color-scheme: dark)" srcset="docs/screenshots/synastry-calculator-dark.webp"><img alt="Calculadora de sinastria com notas e marcadores por área" src="docs/screenshots/synastry-calculator-light.webp"></picture> | <img alt="Primeira página de um relatório de sinastria" src="docs/screenshots/synastry-report-pdf.webp"> |
 
 | Opções do relatório | Dicionário de significados |
 |---|---|
-| <img alt="Opções do relatório de sinastria" src="docs/screenshots/synastry-report-options-dark.webp"> | <img alt="Dicionário de significados da sinastria" src="docs/screenshots/synastry-dictionary-dark.webp"> |
+| <picture><source media="(prefers-color-scheme: dark)" srcset="docs/screenshots/synastry-report-options-dark.webp"><img alt="Opções do relatório de sinastria" src="docs/screenshots/synastry-report-options-light.webp"></picture> | <picture><source media="(prefers-color-scheme: dark)" srcset="docs/screenshots/synastry-dictionary-dark.webp"><img alt="Dicionário de significados da sinastria" src="docs/screenshots/synastry-dictionary-light.webp"></picture> |
 
 | Mapa natal | Trânsitos |
 |---|---|
-| <img alt="Formulário do mapa natal e tabela de posições" src="docs/screenshots/natal-chart-dark.webp"> | <img alt="Trânsitos, posições e tabela de aspectos" src="docs/screenshots/ephemeris-dark.webp"> |
+| <picture><source media="(prefers-color-scheme: dark)" srcset="docs/screenshots/natal-chart-dark.webp"><img alt="Formulário do mapa natal e tabela de posições" src="docs/screenshots/natal-chart-light.webp"></picture> | <picture><source media="(prefers-color-scheme: dark)" srcset="docs/screenshots/ephemeris-dark.webp"><img alt="Trânsitos, posições e tabela de aspectos" src="docs/screenshots/ephemeris-light.webp"></picture> |
 
-As imagens seguem o tema do seu GitHub; o site tem seu próprio botão de tema claro e escuro. Os nomes nos exemplos são primeiros nomes de pessoas que concordaram em aparecer.
+As imagens seguem o tema do seu GitHub (o relatório é um PDF, então tem uma versão só); o site tem seu próprio botão de tema claro e escuro. Os nomes nos exemplos são primeiros nomes de pessoas que concordaram em aparecer.
 
 </details>
 
@@ -98,7 +98,7 @@ Para publicar, conecte o repositório ao Netlify (ou a qualquer hospedagem está
 ├── decks/                   Definição dos baralhos (riderwaite.js, _template.js)
 ├── images/riderwaite/       Imagens das cartas (digitalizações de 1909, domínio público)
 ├── sinastria/               CSS e lógica das páginas de sinastria
-├── efemerides/              CSS e lógica das páginas de mapas e efemérides
+├── astro/                   Motor astronômico e lógica das páginas de mapas e efemérides
 ├── docs/                    Documentação, capturas de tela e um baralho de exemplo
 └── scripts/                 Script auxiliar para preparar imagens de cartas
 ```

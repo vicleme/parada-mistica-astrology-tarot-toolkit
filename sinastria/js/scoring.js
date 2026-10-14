@@ -7,7 +7,7 @@
  * Usado por: comparisons.js, compute.js, dictionary.js, main.js, parser.js.
  */
 
-import { AXIS_BOOST, CALIBRATION, DSC_ASC_INTERMEDIATE_TIER } from './calibration.js';
+import { CALIBRATION } from './calibration.js';
 import { ASPECT_LABEL_PT, PLANET_LABEL_PT, SIGN_LABEL_PT } from './labels.js';
 import { AFFINITY_JUPITER_PAIRS, AMBIVALENT_CONJUNCTION_POINTS, ANGULAR_HOUSES, ATTRACTION_PAIRS, CADENT_HOUSES, CORE_PERSONAL_PLANETS, DESTINY_ANCHORS, DSC_ASC_SYMMETRIC_ASPECTS, DSC_PERSONAL_PLANETS, DUAL_CATEGORY_PAIRS, EMOCIONAL_PAIRS, HARD_PLANETS, HOUSE_CATEGORY_MARKERS, HOUSE_DUAL_CATEGORY_MARKERS, INTELECTUAL_PAIRS, LUMINARY_STRUCTURE_PAIRS, MARS_CHEMISTRY_CONJUNCTION_PARTNERS, MENTAL_STRUCTURE_PAIRS, PRATICO_ANCHORS, STRUCTURE_ANCHORS, TRANSPERSONAL_PLANETS, VENUS_BENIGN_HARD_PARTNERS } from './pairs.js';
 
@@ -155,34 +155,8 @@ export function houseAngularityMult(house){
   return CALIBRATION.houseAngularityMult.succedent;
 }
 
-export function axisBoost(planet1, planet2, aspect){
-  // Conjunção/oposição/quadratura ao Descendente são geometricamente IDÊNTICAS ao
-  // mesmo aspecto formado com o Ascendente (mesmo eixo, 180° opostos — 90°/180°/0° de
-  // um ponto é sempre o mesmo ângulo do seu oposto). Isso vale pra QUALQUER planeta ou
-  // ponto, não só os pessoais — por isso, nesses três aspectos, tratamos DSC como
-  // Ascendente pra fins de consulta no AXIS_BOOST, herdando o peso que o Ascendente já
-  // tiver com aquele planeta (1.35, 1.20, ou o genérico 1.0, o que for).
-  if (DSC_ASC_SYMMETRIC_ASPECTS.has(aspect)){
-    const p1 = planet1 === 'DSC' ? 'Ascendant' : planet1;
-    const p2 = planet2 === 'DSC' ? 'Ascendant' : planet2;
-    const pair = [p1, p2].sort().join('-');
-    return AXIS_BOOST.get(pair) || 1.0;
-  }
-
-  // Fora desses três aspectos, a simetria geométrica não existe de verdade (um trígono
-  // ao Ascendente vira sextil ao Descendente — ângulos diferentes) — aí sim a leitura
-  // "papel de parceria de longo prazo" (Descendente) pode legitimamente pesar diferente
-  // da "reconhecimento instantâneo" (Ascendente). DSC-pessoal usa o tier intermediário;
-  // qualquer outro par de DSC usa o que já estiver no mapa (ex.: DSC-Saturn/DSC-Node/
-  // DSC-Vertex, já deliberadamente iguais ao Ascendente em todos os aspectos por
-  // decisão anterior) ou cai no genérico 1.0.
-  const isDscPersonal = (planet1 === 'DSC' && DSC_PERSONAL_PLANETS.has(planet2))
-    || (planet2 === 'DSC' && DSC_PERSONAL_PLANETS.has(planet1));
-  if (isDscPersonal) return DSC_ASC_INTERMEDIATE_TIER;
-
-  const pair = [planet1, planet2].sort().join('-');
-  return AXIS_BOOST.get(pair) || 1.0;
-}
+// axisBoost mora em astro/js/core/weights.js (fonte única de pesos); reexportado aqui.
+export { axisBoost } from '../../astro/js/core/weights.js';
 
 // Texto do explainer de Compatibilidade Geral muda com a fórmula (ver comentário em
 // computeScores) — sem isso, a explicação na tela ficava desatualizada/errada pra
@@ -249,7 +223,21 @@ export function isVenusBenignAspect(planet1, planet2){
   return false;
 }
 
-export function harmonicFraction(aspectWord, planet1, planet2, sameSign){
+// Marte em quadratura/oposição com Sol ou Ascendente: na leitura tradicional de sinastria
+// é faísca com atrito (atração mais conflito), não bloqueio puro. Fica em 0.30, abaixo
+// do 0.45 de Marte-Vênus/Marte-Marte, porque esses são o par de química classicamente
+// "especial" e complementar; Sol e Ascendente têm essa leitura, mas com menos força.
+// Marte-Lua fica de fora (leitura tradicional é de irritação e choque emocional).
+// Vale SÓ no contexto da categoria Atração (context === 'attraction'): a leitura de
+// "faísca" é sobre atração; no panorama geral da relação (harmonia, Estrutura, outras
+// categorias) o atrito continua contando como tensão.
+const MARS_SUN_ASC_HARD_FRACTION = 0.30;
+function isMarsSunAscHard(planet1, planet2){
+  const other = planet1 === 'Mars' ? planet2 : (planet2 === 'Mars' ? planet1 : null);
+  return other === 'Sun' || other === 'Ascendant';
+}
+
+export function harmonicFraction(aspectWord, planet1, planet2, sameSign, context){
   if (aspectWord === 'Trine' || aspectWord === 'Sextile') return 1.0;
   if (aspectWord === 'Square' || aspectWord === 'Opposition'){
     if (isJupiterSaturnHardAspect(planet1, planet2)) return 0.1;
@@ -269,6 +257,7 @@ export function harmonicFraction(aspectWord, planet1, planet2, sameSign){
     // Vênus-Mercúrio/Sol/Lua/Vênus em quadratura/oposição: ver isVenusBenignAspect acima —
     // testado com o caso real Vênus oposição Mercúrio (confirmado com o usuário).
     if (isVenusBenignAspect(planet1, planet2)) return 0.25;
+    if (context === 'attraction' && isMarsSunAscHard(planet1, planet2)) return MARS_SUN_ASC_HARD_FRACTION;
     return 0.0;
   }
   // Semisextile (30°) é um aspecto menor entre signos vizinhos — sem harmonia real de

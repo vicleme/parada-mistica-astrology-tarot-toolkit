@@ -20,6 +20,7 @@ npm-debug.log*
 *.bak
 *.tmp
 *.zip
+diff.txt
 
 # Exports locais do app de sinastria (dicionário e comparações).
 # Contêm nomes e interpretações de pessoas reais: nunca versionar nem publicar.

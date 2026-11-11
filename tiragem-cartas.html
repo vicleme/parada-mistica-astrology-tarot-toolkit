@@ -76,18 +76,22 @@
     <!-- Modal de cópia de perguntas -->
     <div id="modalCopiar" class="modal-overlay" style="display:none">
         <div class="modal-box">
-            <h3>📋 Copiar perguntas</h3>
+            <h3>📋 Copiar em massa</h3>
             <p>Selecione quais perguntas deseja copiar:</p>
+            <div class="copia-toolbar">
+                <button type="button" class="btn-secundario btn-pequeno" onclick="selecionarTodasCopia(true)">Selecionar todas</button>
+                <button type="button" class="btn-secundario btn-pequeno" onclick="selecionarTodasCopia(false)">Desmarcar todas</button>
+            </div>
             <div id="listaCopiar"></div>
             <div class="copia-ordem-row">
-                <label>Ordem:</label>
+                <label>Ordem das tiragens:</label>
                 <div class="toggle-modo toggle-ordem">
-                    <button type="button" id="btn-ordem-recente" class="ativo" onclick="definirOrdemCopia('recente')">Mais recente → mais antiga</button>
-                    <button type="button" id="btn-ordem-antiga" onclick="definirOrdemCopia('antiga')">Mais antiga → mais recente</button>
+                    <button type="button" id="btn-ordem-recente" onclick="definirOrdemCopia('recente')">Mais recente → mais antiga</button>
+                    <button type="button" id="btn-ordem-antiga" class="ativo" onclick="definirOrdemCopia('antiga')">Mais antiga → mais recente</button>
                 </div>
             </div>
             <div class="modal-acoes">
-                <button onclick="confirmarCopia()">Copiar selecionadas</button>
+                <button id="btn-confirmar-copia" onclick="confirmarCopia()">Copiar selecionadas</button>
                 <button onclick="fecharModalCopiar()" class="btn-secundario">Cancelar</button>
             </div>
         </div>
@@ -215,15 +219,44 @@
         </div>
     </div>
 
-    <!-- Perguntas -->
-    <label>Perguntas:</label>
+    <!-- Perguntas / Temas -->
+    <div class="perguntas-cabecalho">
+        <label id="label-perguntas">Perguntas:</label>
+        <div class="toggle-modo toggle-rotulo" title="Pergunta: o campo é esvaziado depois de tirar. Tema: o campo é mantido.">
+            <button type="button" id="btn-rotulo-pergunta" class="ativo" onclick="definirRotulo('pergunta')">Pergunta</button>
+            <button type="button" id="btn-rotulo-tema" onclick="definirRotulo('tema')">Tema</button>
+        </div>
+        <button type="button" id="btn-modo-texto-perguntas" class="btn-secundario btn-pequeno" onclick="toggleModoTextoPerguntas()">📝 Digitar várias</button>
+    </div>
+    <p id="rotulo-ajuda" class="ajuda-texto"></p>
     <div id="perguntas-lista"></div>
-    <button id="btn-add-pergunta" onclick="adicionarPergunta()">+ Adicionar pergunta</button>
+    <div id="perguntas-texto-wrap" class="posicoes-textarea-wrap" style="display:none">
+        <details class="dica-recolhivel">
+            <summary id="perguntas-texto-resumo">Como digitar várias</summary>
+            <p id="perguntas-texto-hint" class="posicoes-textarea-hint"></p>
+        </details>
+        <textarea id="perguntas-texto" class="posicoes-textarea" rows="8"></textarea>
+    </div>
+    <div class="perguntas-acoes">
+        <button id="btn-add-pergunta" onclick="adicionarPergunta()">+ Adicionar pergunta</button>
+        <button id="btn-add-tiragem" type="button" class="btn-secundario" onclick="adicionarTiragem()" title="Começa uma nova tiragem, com monte próprio, dentro do mesmo Tirar">＋ Nova tiragem</button>
+        <button id="btn-limpar-perguntas" type="button" class="btn-secundario" onclick="limparPerguntas()">🧹 Limpar perguntas</button>
+    </div>
+
+    <!-- Monte entre perguntas -->
+    <div class="monte-row">
+        <label for="sel-monte">Cartas entre perguntas:</label>
+        <select id="sel-monte">
+            <option value="unico">Sem repetir (um monte por tiragem)</option>
+            <option value="pergunta">Podem repetir (monte novo a cada pergunta)</option>
+        </select>
+    </div>
+    <p id="monte-ajuda" class="ajuda-texto"></p>
 
     <!-- Botões de ação -->
     <div class="botoes-principais">
         <button onclick="sortearTudo()">✨ Tirar</button>
-        <button class="btn-secundario" onclick="exibirBaralho()">📖 Exibir baralho</button>
+        <button class="btn-secundario" id="btn-exibir-baralho" onclick="exibirBaralho()">📖 Exibir baralho</button>
         <button class="btn-secundario" id="btn-encerrar-sessao" style="display:none" onclick="encerrarSessao()">🔚 Encerrar sessão</button>
     </div>
 </div>
@@ -239,8 +272,16 @@
      BOTÕES DE AÇÃO DO REGISTRO
 ═══════════════════════════════════════════════════════════════ -->
 <div class="botoes-acao">
-    <button onclick="copiarUltima()">⚡ Copiar última</button>
-    <button onclick="abrirModalCopiar()">📋 Copiar perguntas</button>
+    <span class="copiar-grupo">
+        <select id="sel-copiar" aria-label="O que copiar">
+            <option value="ultima">Última tiragem</option>
+            <option value="consulta">Consulta</option>
+            <option value="sessao" id="opt-copiar-sessao" hidden disabled>Sessão</option>
+            <option value="registro">Registro (tudo)</option>
+            <option value="massa">Em massa…</option>
+        </select>
+        <button id="btn-copiar" onclick="copiarSelecionado(this)" title="Copia o que está selecionado ao lado">📋 Copiar</button>
+    </span>
     <button class="btn-secundario" onclick="limparTiragens()">🗑 Limpar registro</button>
     <button class="btn-secundario" onclick="capturarTiragem()">📷 Capturar</button>
 </div>
@@ -262,11 +303,19 @@
 <div id="painel-preencher-registro" style="display:none; max-width:680px; width:92%; margin:0 auto 24px;">
     <div class="painel-preencher-box">
         <h4>✏️ Preencher registro com tiragem copiada</h4>
-        <p class="painel-hint">Cole aqui o texto de uma tiragem copiada anteriormente. O sistema vai identificar as cartas e gerar a visualização automática.</p>
+        <p class="painel-hint">Cole aqui o texto de uma tiragem copiada anteriormente — uma pergunta, várias perguntas ou várias tiragens (cada tiragem separada por <code>---</code>, como o Cartarium copia). Uma linha <code>Monte: separado</code> indica que as cartas se repetiram entre as perguntas daquela tiragem. O sistema identifica as cartas e gera a visualização automática.</p>
         <textarea id="input-registro-manual" rows="8" placeholder="Pergunta: Qual a mensagem do mês?
 Baralho: Rider-Waite
 Spread: Cruz Celta
 Tiragem: A Lua, O Sol (Invertida), O Mundo
+
+Pergunta: E sobre o trabalho?
+Baralho: Rider-Waite
+Tiragem: O Mago, A Torre
+---
+Pergunta: Outra tiragem
+Baralho: Rider-Waite
+Tiragem: A Estrela
 
 (Ou cole livremente — o sistema tentará extrair as cartas da linha 'Tiragem:')"></textarea>
         <div style="display:flex; gap:8px; margin-top:10px; flex-wrap:wrap;">

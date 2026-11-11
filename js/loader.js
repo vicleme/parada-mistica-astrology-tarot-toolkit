@@ -147,6 +147,7 @@ function popularSelects() {
     selSistema.addEventListener("change", () => {
         popularBaralhos(selSistema.value);
         popularSpreads(selSistema.value);
+        if (typeof atualizarBotaoBaralho === "function") atualizarBotaoBaralho();
         if (typeof renderizarSugestoes === "function") {
             document.querySelectorAll(".pergunta-bloco").forEach(bloco => {
                 renderizarSugestoes(bloco, parseInt(bloco.dataset.id));
@@ -164,6 +165,7 @@ function popularSelects() {
         _atualizarBotaoFavorito(selBaralho.value);
         popularCreditos(selBaralho.value);
         if (typeof atualizarMaxCartas === "function") atualizarMaxCartas();
+        if (typeof atualizarBotaoBaralho === "function") atualizarBotaoBaralho();
         // Se há sessão ativa com outro deck, avisa
         if (SESSAO.ativa && SESSAO.deckId !== selBaralho.value) {
             mostrarAvisoTrocaDeck();
@@ -177,6 +179,7 @@ function popularSelects() {
     if (selCopias) {
         selCopias.addEventListener("change", () => {
             if (typeof atualizarMaxCartas === "function") atualizarMaxCartas();
+            if (typeof atualizarBotaoBaralho === "function") atualizarBotaoBaralho();
             if (SESSAO.ativa && SESSAO.copias !== obterCopias()) {
                 mostrarAvisoTrocaDeck();
             } else if (SESSAO.ativa && SESSAO.deckId === selBaralho.value) {

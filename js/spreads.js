@@ -10,16 +10,6 @@ const SPREADS = [
         layout: null
     },
 
-    // ── PERSONALIZADO ─────────────────────────────────────
-    {
-        id: "personalizado",
-        nome: "Personalizado (informar posições)",
-        grupo: "Livre",
-        sistemas: [],   // compatível com todos
-        posicoes: [],   // posições definidas pelo usuário na hora
-        layout: null
-    },
-
     // ── GERAIS (TAROT / ORÁCULOS) ──────────────────────────
     {
         id: "passado-presente-futuro",

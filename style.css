@@ -1593,6 +1593,21 @@ input[type="checkbox"] {
 }
 
 
+/* ── Painel "Posições" por pergunta (recolhível, igual ao de Sugestões) ── */
+.posicoes-painel {
+    margin-top: 6px;
+}
+.posicoes-toggle {
+    margin-bottom: 2px;
+}
+.posicoes-painel .posicoes-custom-wrap {
+    margin-top: 4px;
+}
+.posicao-custom-input::placeholder {
+    color: #9aa0b8;
+    font-style: italic;
+}
+
 /* Botão de tema movido para a navbar — ver .pm-btn-tema */
 
 /* ── Ajustes escuro: inputs, selects, textareas ─────────────── */
@@ -1727,6 +1742,27 @@ input[type="checkbox"] {
     font-size: 0.78rem;
     color: var(--text-muted);
     margin: 0 0 6px 0;
+}
+/* Explicação recolhível (digitar várias perguntas/temas) */
+.dica-recolhivel {
+    margin: 0 0 6px 0;
+}
+.dica-recolhivel > summary {
+    cursor: pointer;
+    user-select: none;
+    font-size: 0.82rem;
+    color: var(--text-muted);
+    padding: 2px 0;
+}
+.dica-recolhivel > summary:hover,
+.dica-recolhivel > summary:focus-visible {
+    color: var(--accent);
+}
+.dica-recolhivel[open] > summary {
+    margin-bottom: 4px;
+}
+.dica-recolhivel .posicoes-textarea-hint {
+    line-height: 1.5;
 }
 .posicoes-textarea {
     width: 100%;
@@ -2486,3 +2522,119 @@ input[type="checkbox"] {
 [data-tema="escuro"] .testimonial-dots span { background: rgba(255,255,255,0.15); }
 [data-tema="escuro"] .testimonial-dots span.ativo { background: var(--azul-nebuloso); }
 [data-tema="escuro"] .home-newsletter-msg { color: var(--azul-nebuloso); }
+
+/* ── Pergunta/Tema, limpar e digitar várias ───────────────── */
+.perguntas-cabecalho {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px 12px;
+    margin-top: 4px;
+}
+.perguntas-cabecalho label { margin: 0; }
+.perguntas-cabecalho .btn-pequeno { margin-left: auto; }
+.toggle-rotulo button { padding: 4px 12px; font-size: 0.82rem; }
+button.btn-pequeno { padding: 5px 12px; font-size: 0.82rem; }
+#rotulo-ajuda { margin: 6px 0 0; }
+#perguntas-texto-wrap { margin: 10px 0; }
+#perguntas-texto-wrap .sugestoes-wrap { margin-top: 10px; }
+.perguntas-acoes { display: flex; flex-wrap: wrap; gap: 8px; }
+#btn-limpar-perguntas { font-size: 0.88rem; padding: 7px 14px; }
+
+/* ── Modal de cópia agrupado por tiragem ──────────────────── */
+.copia-toolbar { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 10px; }
+#listaCopiar { max-height: 340px; }
+.copia-grupo {
+    border: 1px solid var(--border-soft);
+    border-radius: 10px;
+    padding: 4px 10px;
+    margin-bottom: 8px;
+}
+.copia-grupo-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    padding: 6px 0;
+    cursor: pointer;
+}
+.copia-grupo-header input[type="checkbox"] { width: auto; margin: 3px 0 0; flex-shrink: 0; }
+.copia-grupo-info { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.copia-grupo-titulo { font-weight: bold; font-size: 0.88rem; color: var(--text-heading); }
+.copia-grupo-texto { font-size: 0.86rem; }
+.copia-grupo-meta { font-size: 0.76rem; color: var(--text-muted); font-weight: normal; }
+.copia-badge {
+    display: inline-block;
+    margin-left: 6px;
+    padding: 1px 8px;
+    border-radius: 999px;
+    background: var(--accent-light);
+    color: var(--accent);
+    font-size: 0.7rem;
+    font-weight: bold;
+    vertical-align: middle;
+}
+.copia-item-sub { padding-left: 24px; }
+
+/* ── Registro agrupado por tiragem ────────────────────────── */
+.registro-grupo {
+    border: 1px solid var(--border-soft);
+    border-radius: 10px;
+    padding: 10px 12px 0;
+    margin-bottom: 14px;
+}
+.reg-grupo-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 8px 12px;
+    padding-bottom: 8px;
+    margin-bottom: 10px;
+    border-bottom: 2px solid var(--border-soft);
+}
+.reg-grupo-info { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.reg-grupo-titulo { font-weight: bold; color: var(--text-heading); }
+.reg-grupo-meta { font-size: 0.75rem; color: var(--text-muted); }
+.reg-grupo-acoes, .reg-botoes { display: flex; flex-wrap: wrap; gap: 6px; }
+.registro-item .reg-rodape { flex-wrap: wrap; }
+
+
+/* ── Apagar do registro (✕) ───────────────────────────────── */
+.registro-item .reg-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; }
+.btn-apagar-reg {
+    background: transparent;
+    color: var(--text-muted);
+    border: 1px solid var(--border-soft);
+    border-radius: 6px;
+    width: 26px;
+    height: 26px;
+    padding: 0;
+    font-size: 0.8rem;
+    line-height: 1;
+    cursor: pointer;
+    flex-shrink: 0;
+    transition: background 0.15s, color 0.15s, border-color 0.15s;
+}
+.btn-apagar-reg:hover { background: #fbe9e9; color: #b3261e; border-color: #e4a9a5; transform: none; }
+[data-tema="escuro"] .btn-apagar-reg:hover { background: #3a1f1f; color: #ff8f88; border-color: #7a3b37; }
+
+/* ── Botão único Copiar (select + botão) ──────────────────── */
+.copiar-grupo { display: inline-flex; gap: 6px; align-items: stretch; flex-wrap: wrap; justify-content: center; }
+.copiar-grupo select { width: auto; min-width: 150px; }
+.copiar-grupo button { max-width: none; flex: none; }
+
+/* ── Tiragens dentro do mesmo Tirar ───────────────────────── */
+.grupo-divisor {
+    display: flex; align-items: center; justify-content: space-between; gap: 8px;
+    margin: 14px 0 6px; padding-bottom: 4px;
+    border-bottom: 2px solid var(--border-soft);
+}
+.grupo-divisor:first-child { margin-top: 0; }
+.grupo-divisor-titulo { font-weight: bold; color: var(--text-heading); font-size: 0.9rem; }
+.tiragem-grupo-titulo { margin: 22px 0 4px; color: var(--text-heading); text-align: center; }
+.monte-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin: 10px 0 2px; }
+.monte-row label { margin: 0; }
+.monte-row select { width: auto; flex: 1; min-width: 220px; }
+.grupo-divisor { flex-wrap: wrap; }
+.grupo-divisor-acoes { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+.divisor-monte { width: auto; padding: 4px 8px; font-size: 0.8rem; }
